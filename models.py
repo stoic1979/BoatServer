@@ -18,7 +18,7 @@ class User(db.Model):
         self.phone = phone
 
     def __repr__(self):
-        return "{u'phone': %r}" % self.phone.decode('utf-8')
+        return {u'phone': self.phone}
 
 
 class PoliceBoat(db.Model):
