@@ -29,7 +29,7 @@ class PhoneResource(Resource):
         # admin = User.query.filter_by(username='admin').first()
 
     def get(self):
-        ret = { "err": 0 }
+        ret = { "err": 0, "users": User.query.all()}
         return ret, 201
 
 
