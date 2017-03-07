@@ -23,7 +23,7 @@ class PhoneResource(Resource):
         
         print "Creating phone validation req.: ", phone
 
-        user = User("", "", phone) 
+        user = User(phone, phone, phone) 
         db.session.add(user)
         db.session.commit()
 
