@@ -17,10 +17,14 @@ class User(db.Model):
         self.email = email
         self.phone = phone
 
-    def __repr__(self):
-        #return {u'phone': self.phone}
-        print "User -> repr"
-        return str(self.phone)
+    @property
+    def serialize(self):
+       """Return object data in easily serializeable format"""
+       return {
+           'username': self.phone,
+           'email': self.phone,
+           'phone': self.phone
+       }
 
 
 class PoliceBoat(db.Model):
@@ -35,6 +39,7 @@ class PoliceBoat(db.Model):
 
 
 try:
+    print "================================= create_all ==================================="
     db.create_all()
 except:
     pass

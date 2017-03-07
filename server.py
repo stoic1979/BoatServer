@@ -8,12 +8,21 @@ from flask_restful import Resource, Api, reqparse
 
 from models import User, db, app
 
+import os
+
 # setup apis
 api = Api(app)
 
 class HelloWorld(Resource):
     def get(self):
-        ret = { "err": 0, "users": User.query.all()}
+        users = []
+        try:
+            for user in User.query.all():
+                users.append(user.serialize)
+        except Exception as exp:
+            print "=============> got exp", exp
+
+        ret = { "err": 0, "users": users}
         return ret, 201
 
 
@@ -28,26 +37,6 @@ class PhoneResource(Resource):
         db.session.commit()
 
         # admin = User.query.filter_by(username='admin').first()
-
-    def get(self):
-
-        print "--- getting user ---"
-
-        users = []
-        try:
-            for user in User.query.all():
-                print "--- appending phone: ", phone
-                users.append(user.phone)
-        except Exception as exp:
-            print "=============> got exp", exp
-
-        print "-------------- users:", users
-
-
-        ret = { "err": 0, "users": users}
-        return ret, 201
-
-
 
     def post(self):
         parser = reqparse.RequestParser()
