@@ -24,6 +24,11 @@ class PhoneResource(Resource):
 
         # admin = User.query.filter_by(username='admin').first()
 
+    def get(self):
+        return "abc", 201
+
+
+
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('phone')
@@ -60,6 +65,7 @@ class CodeResource(Resource):
 
 api.add_resource(PhoneResource, '/verify_phoneno')
 api.add_resource(CodeResource, '/verify_code')
+api.add_resource(PhoneResource, '/verifications')
 
 if __name__ == "__main__":
     db.create_all()
