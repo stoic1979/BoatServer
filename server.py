@@ -11,6 +11,10 @@ from models import User, db, app
 # setup apis
 api = Api(app)
 
+class HelloWorld(Resource):
+    def get(self):
+        return {'hello': 'world'}
+
 
 class PhoneResource(Resource):
 
@@ -25,7 +29,8 @@ class PhoneResource(Resource):
         # admin = User.query.filter_by(username='admin').first()
 
     def get(self):
-        return "abc", 201
+        ret = { "err": 0 }
+        return ret, 201
 
 
 
@@ -65,7 +70,7 @@ class CodeResource(Resource):
 
 api.add_resource(PhoneResource, '/verify_phoneno')
 api.add_resource(CodeResource, '/verify_code')
-api.add_resource(PhoneResource, '/verifications')
+api.add_resource(HelloWorld, '/')
 
 if __name__ == "__main__":
     db.create_all()
