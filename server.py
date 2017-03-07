@@ -74,6 +74,6 @@ api.add_resource(CodeResource, '/verify_code')
 api.add_resource(HelloWorld, '/')
 
 if __name__ == "__main__":
-    db.create_all()
+    #db.create_all()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
