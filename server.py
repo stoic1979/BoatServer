@@ -13,7 +13,8 @@ api = Api(app)
 
 class HelloWorld(Resource):
     def get(self):
-        return {'hello': 'world'}
+        ret = { "err": 0, "users": User.query.all()}
+        return ret, 201
 
 
 class PhoneResource(Resource):
