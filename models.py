@@ -32,9 +32,9 @@ class PoliceBoat(db.Model):
         return '<PoliceBoat:  #%r>' % self.boat_number
 
 
-db.create_all()
 
 if __name__ == "__main__":
+    db.create_all()
     """
     admin = User('admin', 'admin@example.com', "99999999")
     guest = User('guest', 'guest@example.com', "77777777")
