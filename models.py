@@ -20,6 +20,18 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+
+class PoliceBoat(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    boat_number = db.Column(db.String(60), unique=True)
+
+    def __init__(self, boat_number)
+        self.boat_number = boat_number
+
+    def __repr__(self):
+        return '<PoliceBoat:  #%r>' % self.boat_number
+
+
 db.create_all()
 
 if __name__ == "__main__":
