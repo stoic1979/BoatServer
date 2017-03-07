@@ -32,7 +32,10 @@ class PhoneResource(Resource):
     def get(self):
         users = []
         for user in User.query.all():
+            print "appending phone: ", phone
             users.append(user.phone)
+
+        print "-------------- users:", users
 
 
         ret = { "err": 0, "users": users}
