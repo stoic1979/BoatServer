@@ -30,7 +30,12 @@ class PhoneResource(Resource):
         # admin = User.query.filter_by(username='admin').first()
 
     def get(self):
-        ret = { "err": 0, "users": User.query.all()}
+        users = []
+        for user in User.query.all():
+            users.append(user.phone)
+
+
+        ret = { "err": 0, "users": users}
         return ret, 201
 
 
