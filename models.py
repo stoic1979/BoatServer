@@ -18,7 +18,8 @@ class User(db.Model):
         self.phone = phone
 
     def __repr__(self):
-        return {u'phone': self.phone}
+        #return {u'phone': self.phone}
+        return self.phone
 
 
 class PoliceBoat(db.Model):
