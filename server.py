@@ -30,10 +30,16 @@ class PhoneResource(Resource):
         # admin = User.query.filter_by(username='admin').first()
 
     def get(self):
+
+        print "--- getting user ---"
+
         users = []
-        for user in User.query.all():
-            print "appending phone: ", phone
-            users.append(user.phone)
+        try:
+            for user in User.query.all():
+                print "--- appending phone: ", phone
+                users.append(user.phone)
+        except Exception as exp:
+            print "=============> got exp", exp
 
         print "-------------- users:", users
 
@@ -59,6 +65,8 @@ class PhoneResource(Resource):
                 "err": 0, 
                 "msg": "Received phone no., will send 6 digit verification code by SMS"
              }
+
+        print "--- create user done ---"
 
         return ret, 201
 

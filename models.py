@@ -19,7 +19,8 @@ class User(db.Model):
 
     def __repr__(self):
         #return {u'phone': self.phone}
-        return self.phone
+        print "User -> repr"
+        return str(self.phone)
 
 
 class PoliceBoat(db.Model):
