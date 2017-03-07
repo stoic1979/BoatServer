@@ -33,7 +33,10 @@ class PoliceBoat(db.Model):
         return '<PoliceBoat:  #%r>' % self.boat_number
 
 
-db.create_all()
+try:
+    db.create_all()
+except:
+    pass
 
 if __name__ == "__main__":
     """
