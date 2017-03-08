@@ -70,6 +70,31 @@ class PhoneResource(Resource):
         return ret, 201
 
 
+class PoliceBoatResource(Resource):
+    """
+    resource for handling police boat records
+    """
+
+    def post(self):
+
+        # initializing post args parser
+        parser = reqparse.RequestParser()
+        parser.add_argument('lat')
+        parser.add_argument('lng')
+        args = parser.parse_args()
+
+        # reading position vars
+        lat = args['lat']
+        lng = args['lng']
+
+        ret = {
+                "err": 0, 
+                "msg": "police boat added"
+             }
+
+        return ret, 201
+
+
 class CodeResource(Resource):
     """
     resource for handling verification number checking etc.
@@ -92,7 +117,7 @@ class CodeResource(Resource):
                 "msg": "Verification done"
                 }
 
-        # verification failed
+        # checking verification code
         if not User.query.filter_by(phone=phone).filter_by(verification_code=verification_code).first():
             ret["err"] = 1
             ret["msg"] = "Verification with 6 digit code failed, pls check the code"
@@ -104,6 +129,12 @@ api.add_resource(PhoneResource, '/verify_phoneno')
 api.add_resource(CodeResource, '/verify_code')
 api.add_resource(HomeResource, '/')
 
+
+#################################################################
+#                                                               #
+#                           SERVER MAIN                         #
+#                                                               #
+#################################################################
 if __name__ == "__main__":
     #db.create_all()
     port = int(os.environ.get('PORT', 5000))

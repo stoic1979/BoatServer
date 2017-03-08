@@ -1,3 +1,7 @@
+#
+# script for various ORM models for project
+#
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -15,7 +19,7 @@ class User(db.Model):
 
 
     def __init__(self, phone, verification_code):
-        #TODO do we need username or email
+        #TODO do we need username or email ??
         self.phone = phone
         self.verification_code = verification_code
 
@@ -45,13 +49,16 @@ try:
 except:
     pass
 
+
+################################
+#                              #
+#       SOME QUICK TESTS       #
+#                              #
+################################
 if __name__ == "__main__":
     """
-    admin = User('admin', 'admin@example.com', "99999999")
-    guest = User('guest', 'guest@example.com', "77777777")
-
-    db.session.add(admin)
-    db.session.add(guest)
+    user = User("77777777", "abc123")
+    db.session.add(user)
     db.session.commit()
     """
     print "Users:",  User.query.all()
