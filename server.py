@@ -7,6 +7,7 @@ from flask import Flask, render_template, request
 from flask_restful import Resource, Api, reqparse
 
 from models import User, db, app
+from utils import *
 
 import os
 
@@ -27,22 +28,23 @@ class HelloWorld(Resource):
 
 
 class PhoneResource(Resource):
+    """
+    resource for handling phone number registration etc.
+    """
 
     def createUser(self, phone):
         
         print "Creating phone validation req.: ", phone
 
-        user = User(phone, phone, phone) 
+        verify_code = get_random_str(6)
+        user = User(phone, verify_code)
         db.session.add(user)
         db.session.commit()
-
-        # admin = User.query.filter_by(username='admin').first()
 
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('phone')
         args = parser.parse_args()
-        print "args:", args
 
         phone = args['phone']
 
@@ -62,6 +64,9 @@ class PhoneResource(Resource):
 
 
 class CodeResource(Resource):
+    """
+    resource for handling verification number checking etc.
+    """
 
     def post(self):
         parser = reqparse.RequestParser()
