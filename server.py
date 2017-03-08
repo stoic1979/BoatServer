@@ -46,16 +46,17 @@ class PhoneResource(Resource):
 
         phone = args['phone']
 
-        self.createUser(phone)
-
-
-        #TODO get 6 digit no. from db for given phone no.
         ret = {
                 "err": 0, 
                 "msg": "Received phone no., will send 6 digit verification code by SMS"
              }
 
-        print "--- create user done ---"
+        # ensure that phone no. doesn't exist
+        if User.query.filter_by(phone=phone).first():
+            ret["err"] = 1
+            ret["msg"] = "Phone no. already exist"
+        else:
+            self.createUser(phone)
 
         return ret, 201
 
