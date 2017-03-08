@@ -9,12 +9,14 @@ from flask_restful import Resource, Api, reqparse
 from models import User, db, app
 from utils import *
 
+import traceback
+
 import os
 
-# setup apis
+# setup REST apis
 api = Api(app)
 
-class HelloWorld(Resource):
+class HomeResource(Resource):
     def get(self):
         users = []
         try:
@@ -22,6 +24,8 @@ class HelloWorld(Resource):
                 users.append(user.serialize)
         except Exception as exp:
             print "=============> got exp", exp
+            traceback.print_stack()
+
 
         ret = { "err": 0, "users": users}
         return ret, 201
@@ -36,16 +40,19 @@ class PhoneResource(Resource):
         
         print "Creating phone validation req.: ", phone
 
-        verify_code = get_random_str(6)
-        user = User(phone, verify_code)
+        verification_code = get_random_str(6)
+        user = User(phone, verification_code)
         db.session.add(user)
         db.session.commit()
 
     def post(self):
+
+        # initializing post args parser
         parser = reqparse.RequestParser()
         parser.add_argument('phone')
         args = parser.parse_args()
 
+        # reading post args
         phone = args['phone']
 
         ret = {
@@ -69,20 +76,33 @@ class CodeResource(Resource):
     """
 
     def post(self):
+
+        # initializing post args parser
         parser = reqparse.RequestParser()
-        parser.add_argument('code')
+        parser.add_argument('verification_code')
+        parser.add_argument('phone')
         args = parser.parse_args()
-        print "args:", args
 
-        code = args['code']
+        # reading post args
+        phone = args['phone']
+        verification_code = args['verification_code']
 
-        ret = {"err": 0, "msg": "Verification done"}
+        ret = {
+                "err": 0, 
+                "msg": "Verification done"
+                }
+
+        # verification failed
+        if not User.query.filter_by(phone=phone).filter_by(verification_code=verification_code).first():
+            ret["err"] = 1
+            ret["msg"] = "Verification with 6 digit code failed, pls check the code"
 
         return ret, 201
 
+# setting up URL end point handlers
 api.add_resource(PhoneResource, '/verify_phoneno')
 api.add_resource(CodeResource, '/verify_code')
-api.add_resource(HelloWorld, '/')
+api.add_resource(HomeResource, '/')
 
 if __name__ == "__main__":
     #db.create_all()

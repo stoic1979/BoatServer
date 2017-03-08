@@ -11,21 +11,20 @@ class User(db.Model):
     username = db.Column(db.String(60), unique=True)
     email = db.Column(db.String(60), unique=True)
     phone = db.Column(db.String(16), unique=True)
+    verification_code = db.Column(db.String(6))
 
-    # verification code
-    code = db.Column(db.String(6), unique=True)
 
-    def __init__(self, phone, verify_code):
+    def __init__(self, phone, verification_code):
         #TODO do we need username or email
         self.phone = phone
-        self.verify_code = verify_code
+        self.verification_code = verification_code
 
     @property
     def serialize(self):
        """Return object data in easily serializeable format"""
        return {
            'phone': self.phone,
-           'verify_code': self.verify_code
+           'verification_code': self.verification_code
        }
 
 
