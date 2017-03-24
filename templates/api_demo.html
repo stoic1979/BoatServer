@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+	</head>
+	<body>
+    	<h1>API Demo</h1>
+
+		<br>
+		<br>
+    	<h4>Add Police Boat</h4>
+    	<form method="post" action="/save_police_boat">
+    		<TABLE>
+    			<tr>
+    				<th>Boat Number</th>
+    				<td><input type="text" name="boat_number" placeholder="Enter the Boat Number"></td>
+    			</tr>
+    			<tr>
+					<td colspan="2"><input type="submit" value="save">
+				</tr>
+    		</TABLE>
+    	</form>
+
+        <h1>Like Report</h1>
+        <form method="post" action="/save_like_report">
+            <table>
+                <tr>
+                    <th>Report Id</th>
+                    <td><input type="text" name="report_id" placeholder="Enter the Report Id"></td>
+                </tr>
+                <tr>
+                    <th>User Id</th>
+                    <td><input type="text" name="user_id" placeholder="Enter the User Id"></td>
+                </tr>
+                <tr>
+                    <th>Likes</th>
+                    <td><input type="text" name="likes" placeholder="Likes"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="submit" value="save Likes">
+                </tr>
+            </table>
+        </form>
+
+    	<a href="/get_police_boats">Get Police Boats</a><br>
+    	<a href="/get_police_boat_locations">Get Police Boats Location</a><br>
+	</body>
+</html>

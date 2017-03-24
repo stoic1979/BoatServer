@@ -6,7 +6,7 @@ from flask import Flask, render_template, request
 
 from flask_restful import Resource, Api, reqparse
 
-from models import User, db, app
+from models import User, PoliceBoat, PoliceBoatLocation, db, app
 from utils import *
 
 import traceback
@@ -128,6 +128,67 @@ class CodeResource(Resource):
 api.add_resource(PhoneResource, '/verify_phoneno')
 api.add_resource(CodeResource, '/verify_code')
 api.add_resource(HomeResource, '/')
+
+# add police boat
+@app.route("/add_police_boat" , methods=['POST'])
+def add_police_boat():
+    return "add police boat"
+
+@app.route("/api_demo")
+def apidemo():
+    templateData = {'title' : 'Home Page'}
+    return render_template("api_demo.html", **templateData )
+
+@app.route("/save_police_boat", methods=['POST'])
+def api_post():
+
+    boat_number = request.form['boat_number']
+    
+    police_boat = PoliceBoat(boat_number)
+    db.session.add(police_boat)
+    db.session.commit()
+    return "boat_number: %s is saved" % (boat_number)
+
+@app.route("/location")
+def location():
+    templateData = {'title' : 'Home Page'}
+    return render_template("location.html", **templateData )
+
+@app.route("/save_location", methods=['POST'])
+def save_location():
+    Police_boat = request.form['Police_boat']
+    lat = request.form['lat']
+    lng = request.form['lng']
+    police_boat_location = PoliceBoatLocation(Police_boat,lat,lng)
+    db.session.add(police_boat_location)
+    db.session.commit()
+    return "Location: %s is saved" % (police_boat_location)
+
+@app.route("/save_like_report", methods=['POST'] )
+def save_like_report():
+    return "hiiii its done"
+
+
+#get_police_boats
+
+@app.route("/get_police_boats")
+def get_police_boats():
+
+    boats = PoliceBoat.query.all()
+    for boat in boats:
+        print "Boat Number: ", boat.boat_number
+
+    return "get the police Boat"
+#get_police_boat_locations
+
+@app.route("/get_police_boat_locations")
+def get_police_boat_locations():
+    boat_locations = PoliceBoatLocation.query.all()
+    for location in boat_locations:
+        print "Police Boat Location: ", location.police_boat
+        print "Police Boat Location: ", location.lat
+        print "Police Boat Location: ", location.lng
+    return "get police boat locations"
 
 
 #################################################################

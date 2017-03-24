@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Flask Heroku Sample
 ====================
 
@@ -26,3 +27,7 @@ A simple Python Flask example application that's ready to run on Heroku.
 ## Contributors
 
 * [Yefim](https://twitter.com/yefim)
+=======
+# BoatServer
+Flask boat server
+>>>>>>> 187b9add9d319e6ed609bac62ecb7f89e1bcd74c
