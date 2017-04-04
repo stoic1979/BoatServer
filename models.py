@@ -71,8 +71,9 @@ class Boat(db.Model):
     # timestamp
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False )
 
-    def __init__(self, name):
+    def __init__(self, name, btype):
         self.name = name
+        self.btype = btype
 
     def __repr__(self):
         return '<Boat:  #%r>' % self.name
@@ -112,7 +113,10 @@ class Likes(db.Model):
 
     # timestamp
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False)
-
+    def __init__(self, report, user):
+        self.report = report
+        self.user = user
+        
 
     def __repr__(self):
         return '<Likes:  #%r>' % self.id
@@ -140,7 +144,7 @@ class Thanks(db.Model):
     report = db.Column(db.BigInteger, ForeignKey('report.id'))
     user = db.Column(db.BigInteger, ForeignKey('user.id'))
 
-# timestamp
+    # timestamp
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False )
 
 

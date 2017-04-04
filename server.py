@@ -6,7 +6,7 @@ from flask import Flask, render_template, request
 
 from flask_restful import Resource, Api, reqparse
 
-from models import User, PoliceBoat, PoliceBoatLocation, db, app
+from models import User, Boat, Report, Likes, Dislikes, Thanks, db, app
 from utils import *
 
 import traceback
@@ -143,9 +143,11 @@ def apidemo():
 def api_post():
 
     boat_number = request.form['boat_number']
+    btype = request.form['btype']
     
-    police_boat = PoliceBoat(boat_number)
-    db.session.add(police_boat)
+    #boat = Boat("assd", 1234)
+    boat = Boat(boat_number, btype)
+    db.session.add(boat)
     db.session.commit()
     return "boat_number: %s is saved" % (boat_number)
 
@@ -154,22 +156,101 @@ def location():
     templateData = {'title' : 'Home Page'}
     return render_template("location.html", **templateData )
 
-@app.route("/save_location", methods=['POST'])
+"""@app.route("/save_location", methods=['POST'])
 def save_location():
-    Police_boat = request.form['Police_boat']
+    boat = request.form['Police_boat']
     lat = request.form['lat']
     lng = request.form['lng']
-    police_boat_location = PoliceBoatLocation(Police_boat,lat,lng)
+    #police_boat_location = Report(1,11,111)
+    police_boat_location = Report(boat, lat,lng)
     db.session.add(police_boat_location)
     db.session.commit()
     return "Location: %s is saved" % (police_boat_location)
 
 @app.route("/save_like_report", methods=['POST'] )
 def save_like_report():
-    return "hiiii its done"
+    report = request.form['report_id']
+    user = request.form['user_id']
+    likes= Likes(report, user)
+    db.session.add(likes)
+    db.session.commit()
+    return "Likes table"
 
-
+@app.route("/save_dislikes_report")
+def dislikes():
+    #report
+    #user
+    dislikes = Dislikes(report, user)
+    db.session.add(dislikes)
+    db.session.commit()
+    return "disliks report"
 #get_police_boats
+
+@app.route("/thanks_report")
+def thanks():
+    #report
+    #user
+    thanks = Thanks(reprt, user)
+    db.session.add(thanks)
+    db.session.commit()
+    return "thanks" """
+
+
+
+
+
+@app.route("/add_like", methods=['POST'])
+def add_like():
+    print "=====add_likes():==", request.form
+    try:
+        likeReportId = request.form['like_report_id']
+        likeUserId = request.form['like_user_id']
+        likes= Likes(likeReportId, likeUserId)
+        db.session.add(likes)
+        db.session.commit()
+    except Exception as exp:
+        print "exp:", exp
+        print(traceback.format_exc())
+    return "likes added"
+
+@app.route("/add_dislike", methods=['POST'])
+def add_dislike():
+    print "=====add_dislike():==", request.form
+    try:
+        dislike_report_id = request.form['dislike_report_id']
+        dislike_user_id = request.form['dislike_user_id']
+    except Exception as exp:
+        print "exp:", exp
+        print(traceback.format_exc())
+    return "Dislike added"
+
+
+@app.route("/add_thanks", methods=['POST'])
+def add_thanks():
+    print "=====add_thanks():==", request.form
+    try:
+        thanks_report_id = request.form['thanks_report_id']
+        thanks_user_id = request.form['thanks_user_id']
+    except Exception as exp:
+        print "exp:", exp
+        print(traceback.format_exc())
+    return "Thanks Added"
+
+@app.route("/get_reports", methods=['POST'])
+def get_reports():
+    print "=====get_reports():==", request.form
+    try:
+        get_lat = request.form['get_lat']
+        get_lng = request.form['get_lng']
+        get_radius = request.form['get_radius4']
+    except Exception as exp:
+        print "exp:", exp
+        print(traceback.format_exc())
+    return "Get Reports.."
+
+
+
+ 
 
 @app.route("/get_police_boats")
 def get_police_boats():

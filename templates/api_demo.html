@@ -15,6 +15,10 @@
     				<th>Boat Number</th>
     				<td><input type="text" name="boat_number" placeholder="Enter the Boat Number"></td>
     			</tr>
+                <tr>
+                    <th>Boat Type</th>
+                    <td><input type="text" name="btype" placeholder="Enter the Btype"></td>
+                </tr>
     			<tr>
 					<td colspan="2"><input type="submit" value="save">
 				</tr>
@@ -25,15 +29,15 @@
         <form method="post" action="/save_like_report">
             <table>
                 <tr>
-                    <th>Report Id</th>
+                    <th>Report ID</th>
                     <td><input type="text" name="report_id" placeholder="Enter the Report Id"></td>
                 </tr>
                 <tr>
-                    <th>User Id</th>
+                    <th>User ID</th>
                     <td><input type="text" name="user_id" placeholder="Enter the User Id"></td>
                 </tr>
                 <tr>
-                    <th>Likes</th>
+                    <th>Like</th>
                     <td><input type="text" name="likes" placeholder="Likes"></td>
                 </tr>
                 <tr>
@@ -44,5 +48,82 @@
 
     	<a href="/get_police_boats">Get Police Boats</a><br>
     	<a href="/get_police_boat_locations">Get Police Boats Location</a><br>
+
+        <h2>Add Like</h2>
+        <form method="post" action="/add_like">
+            <table>
+                <tr>
+                    <th>Report ID</th>
+                    <td><input type="text" name="like_report_id" placeholder="enter Report ID"></td>
+                </tr>
+                <tr>
+                    <th>
+                        User ID:
+                    </th>
+                    <td><input type="text" name="like_user_id" placeholder="Enter User ID"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="submit" value="Add Like">
+                </tr>
+            </table>
+        </form>
+         <h2>Add Dislike</h2>
+        <form  method="post" action="/add_dislike">
+            <table>
+                <tr>
+                    <th>Report ID</th>
+                    <td><input type="text" name="dislike_report_id" placeholder="enter Report ID"></td>
+                </tr>
+                <tr>
+                    <th>
+                        User ID:
+                    </th>
+                    <td><input type="text" name="dislike_user_id" placeholder="Enter User ID"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="submit" value="Add Dislikes">
+                </tr>
+            </table>
+        </form>
+        <h2>Add Thanks</h2>
+        <form  method="post" action="/add_thanks">
+            <table>
+                <tr>
+                    <th>Report ID</th>
+                    <td><input type="text" name="thanks_report_id" placeholder="enter Report ID"></td>
+                </tr>
+                <tr>
+                    <th>
+                        User ID:
+                    </th>
+                    <td><input type="text" name="thanks_user_id" placeholder="Enter User ID"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="submit" value="Add thanks">
+                </tr>
+            </table>
+        </form>
+        <h2>Get Reports</h2>
+         <form  method="post" action="/get_reports">
+            <table>
+                <tr>
+                    <th>Latitude</th>
+                    <td><input type="text" name="get_lat" placeholder="enter lat"></td>
+                </tr>
+                <tr>
+                    <th>
+                        Longitude
+                    </th>
+                    <td><input type="text" name="get_lng" placeholder="Enter lng"></td>
+                </tr>
+                <tr>
+                    <th>Radius</th>
+                    <td><input type="text" name="get_radius" placeholder="Enter Radius"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="submit" value="Get Reports">
+                </tr>
+            </table>
+        </form>
 	</body>
 </html>
