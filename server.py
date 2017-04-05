@@ -197,6 +197,24 @@ def thanks():
 
 
 
+@app.route("/add_profile", methods=['POST'])
+def add_profile():
+    print "======add_profile()::",request.form
+    try:
+        Nickname = request.form['nickname']
+        Email = request.form['email']
+        Town = request.form['town']
+        District = request.form['district']
+        Dob = request.form['dob']
+        Boatinfo = request.form['boatinfo']
+        Profile = User(Nickname, Email, Town, District, Dob, Boatinfo)
+        db.session.add(Profile)
+        print "==============doinnnnnggggg==================="
+        db.session.commit()
+    except Exception as exp:
+        print "exp:", exp
+        print(traceback.format_exc())
+    return "Profile Added"
 
 
 @app.route("/add_like", methods=['POST'])

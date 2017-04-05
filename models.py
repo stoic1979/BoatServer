@@ -40,8 +40,16 @@ class User(db.Model):
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False)
 
 
-    def __init__(self, phone):
-        self.phone = phone
+    # def __init__(self, phone):
+    #     self.phone = phone
+
+    def __init__(self, nickname, email,town, district,dob, boatinfo):
+        self.nickname = nickname
+        self.email = email
+        self.town = town
+        self.district = district
+        self.dob = dob
+        self.boatinfo =boatinfo
 
 
     def __repr__(self):
