@@ -8,10 +8,12 @@ from flask_restful import Resource, Api, reqparse
 
 from models import User, Boat, Report, Likes, Dislikes, Thanks, db, app
 from utils import *
-
+from flask import jsonify 
 import traceback
 
 import os
+import json
+
 
 # setup REST apis
 api = Api(app)
@@ -209,7 +211,6 @@ def add_profile():
         Boatinfo = request.form['boatinfo']
         Profile = User(Nickname, Email, Town, District, Dob, Boatinfo)
         db.session.add(Profile)
-        print "==============doinnnnnggggg==================="
         db.session.commit()
     except Exception as exp:
         print "exp:", exp
@@ -220,16 +221,21 @@ def add_profile():
 @app.route("/add_like", methods=['POST'])
 def add_like():
     print "=====add_likes():==", request.form
+
+    ret = {"error": 0, "msg": "Successfully added like"}
+
     try:
         likeReportId = request.form['like_report_id']
         likeUserId = request.form['like_user_id']
-        likes= Likes(likeReportId, likeUserId)
+        likes = Likes(likeReportId, likeUserId)
         db.session.add(likes)
         db.session.commit()
     except Exception as exp:
         print "exp:", exp
         print(traceback.format_exc())
-    return "likes added"
+        ret["error"] = 1
+        ret["msg"] = "Got exception %s" % exp
+    return json.dumps(ret)
 
 @app.route("/add_dislike", methods=['POST'])
 def add_dislike():
