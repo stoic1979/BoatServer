@@ -219,34 +219,7 @@ def save_location():
     db.session.add(police_boat_location)
     db.session.commit()
     return "Location: %s is saved" % (police_boat_location)
-
-@app.route("/save_like_report", methods=['POST'] )
-def save_like_report():
-    report = request.form['report_id']
-    user = request.form['user_id']
-    likes= Likes(report, user)
-    db.session.add(likes)
-    db.session.commit()
-    return "Likes table"
-
-@app.route("/save_dislikes_report")
-def dislikes():
-    #report
-    #user
-    dislikes = Dislikes(report, user)
-    db.session.add(dislikes)
-    db.session.commit()
-    return "disliks report"
-#get_police_boats
-
-@app.route("/thanks_report")
-def thanks():
-    #report
-    #user
-    thanks = Thanks(reprt, user)
-    db.session.add(thanks)
-    db.session.commit()
-    return "thanks" """
+"""
 
 
 
