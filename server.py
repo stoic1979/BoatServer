@@ -6,7 +6,7 @@ from flask import Flask, render_template, request
 
 from flask_restful import Resource, Api, reqparse
 
-from models import User, Boat, Report, Likes, Dislikes, Thanks, db, app
+from models import User, Boat, Report, Likes, Thanks, db, app
 from utils import *
 from flask import jsonify 
 import traceback
@@ -127,9 +127,60 @@ class CodeResource(Resource):
         return ret, 201
 
 # setting up URL end point handlers
-api.add_resource(PhoneResource, '/verify_phoneno')
-api.add_resource(CodeResource, '/verify_code')
+#api.add_resource(PhoneResource, '/verify_phoneno')
+#api.add_resource(CodeResource, '/verify_code')
 api.add_resource(HomeResource, '/')
+
+
+def createUser(phone):
+        
+    print "Creating phone validation req.: ", phone
+
+    vcode = get_random_str(6)
+    user = User(phone, vcode)
+    db.session.add(user)
+    db.session.commit()
+
+@app.route("/verify_phoneno" , methods=['POST'])
+def verify_phoneno():
+
+    ret = {"err": 0, "msg": "Received phone no., will send 6 digit verification code by SMS"}
+
+    phone = request.form['phone']
+
+    # ensure that phone no. doesn't exist
+    if User.query.filter_by(phone=phone).first():
+        ret["err"] = 1
+        ret["msg"] = "Phone no. already exist"
+    else:
+        createUser(phone)
+
+    return json.dumps(ret)
+
+
+
+@app.route("/verify_code" , methods=['POST'])
+def verify_code():
+    ret = {"err": 0, "msg": "Verification done" }
+
+    phone = request.form['phone']
+    vdone = True
+
+    # checking verification code
+    user = User.query.filter_by(phone=phone).first()
+    if not user:
+        ret["err"] = 1
+        ret["msg"] = "Invalid phone numner"
+    elif user.vdone == True:
+        ret["err"] = 2
+        ret["msg"] = "Verification already done !!!"
+    else:
+        user.vdone = True
+        db.session.add(user)
+        db.session.commit()
+
+    return json.dumps(ret)
+
 
 # add police boat
 @app.route("/add_police_boat" , methods=['POST'])
@@ -218,35 +269,46 @@ def add_profile():
     return "Profile Added"
 
 
-@app.route("/add_like", methods=['POST'])
-def add_like():
-    print "=====add_likes():==", request.form
+def get_report_like_count(report_id):
+    counter = 0
+    likesreport = Likes.query.all()
+    for likes in likesreport:
+        if report_id == likes.report:
+            counter +=1
+    return counter
 
-    ret = {"error": 0, "msg": "Successfully added like"}
+@app.route("/get_like_count", methods=['POST'])
+def get_like_count():
+
+    ret = {"likes_count": 0, "report_id": 0, "error": 0}  
 
     try:
-        likeReportId = request.form['like_report_id']
-        likeUserId = request.form['like_user_id']
-        likes = Likes(likeReportId, likeUserId)
-        db.session.add(likes)
-        db.session.commit()
+        report_id = int(request.form['report_id'])
+        ret["report_id"] = report_id
+        ret["likes_count"] = get_report_like_count(report_id)
     except Exception as exp:
         print "exp:", exp
         print(traceback.format_exc())
         ret["error"] = 1
-        ret["msg"] = "Got exception %s" % exp
+        ret["msg"] = "Got exception: %s" % exp
+
     return json.dumps(ret)
 
-@app.route("/add_dislike", methods=['POST'])
-def add_dislike():
-    print "=====add_dislike():==", request.form
+
+
+@app.route("/add_like", methods=['POST'])
+def add_like():
     try:
-        dislike_report_id = request.form['dislike_report_id']
-        dislike_user_id = request.form['dislike_user_id']
+        likeReportId = int(request.form['report_id'])
+        likeUserId = int(request.form['user_id'])
+        value = int(request.form['value'])
+        like = Likes(likeReportId, likeUserId, value)
+        db.session.add(like)
+        db.session.commit()
     except Exception as exp:
         print "exp:", exp
         print(traceback.format_exc())
-    return "Dislike added"
+    return "Likes Add"
 
 
 @app.route("/add_thanks", methods=['POST'])
@@ -264,9 +326,13 @@ def add_thanks():
 def get_reports():
     print "=====get_reports():==", request.form
     try:
+        boat_id = request.form['boat_id']
         get_lat = request.form['get_lat']
         get_lng = request.form['get_lng']
-        get_radius = request.form['get_radius4']
+        boat_type = request.form['boat_type']
+        getreport = Report(boat_id, get_lat, get_lng, boat_type)
+        db.session.add(getreport)
+        db.session.commit()
     except Exception as exp:
         print "exp:", exp
         print(traceback.format_exc())

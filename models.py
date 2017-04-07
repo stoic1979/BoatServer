@@ -40,17 +40,19 @@ class User(db.Model):
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False)
 
 
-    # def __init__(self, phone):
-    #     self.phone = phone
+    def __init__(self, phone, vcode):
+        self.phone = phone
+        self.vcode = vcode
 
-    def __init__(self, nickname, email,town, district,dob, boatinfo):
+    """
+    def __init__(self, nickname, email, town, district, dob, boatinfo):
         self.nickname = nickname
         self.email = email
         self.town = town
         self.district = district
         self.dob = dob
-        self.boatinfo =boatinfo
-
+        self.boatinfo = boatinfo
+    """
 
     def __repr__(self):
         return '<User:  #%r>' % self.id
@@ -118,32 +120,18 @@ class Likes(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     report = db.Column(db.BigInteger, ForeignKey('report.id'))
     user = db.Column(db.BigInteger, ForeignKey('user.id'))
+    value = db.Column(db.Integer)
 
     # timestamp
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False)
-    def __init__(self, report, user):
+    def __init__(self, report, user, value):
         self.report = report
         self.user = user
+        self.value = value
         
 
     def __repr__(self):
         return '<Likes:  #%r>' % self.id
-
-
-class Dislikes(db.Model):
-    __tablename__ = 'dislikes'
-
-    id = db.Column(db.BigInteger, primary_key=True)
-    report = db.Column(db.BigInteger, ForeignKey('report.id'))
-    user = db.Column(db.BigInteger, ForeignKey('user.id'))
-    
-    # timestamp
-    ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False)
-
-
-    def __repr__(self):
-        return '<Dislikes:  #%r>' % self.id
-
 
 class Thanks(db.Model):
     __tablename__ = 'thanks'

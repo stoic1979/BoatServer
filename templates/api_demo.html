@@ -4,7 +4,7 @@
 		<title></title>
 	</head>
 	<body>
-    	<h1>API Demo</h1>
+    	<!-- <h1>API Demo</h1>
 
 		<br>
 		<br>
@@ -47,44 +47,63 @@
         </form>
 
     	<a href="/get_police_boats">Get Police Boats</a><br>
-    	<a href="/get_police_boat_locations">Get Police Boats Location</a><br>
+    	<a href="/get_police_boat_locations">Get Police Boats Location</a><br> -->
+
+
+
+        <!-- ++++++++++++++++++++++++++++++++++ Add Like ++++++++++++++++++++++++++++++  -->
+
 
         <h2>Add Like</h2>
         <form method="post" action="/add_like">
             <table>
                 <tr>
                     <th>Report ID</th>
-                    <td><input type="text" name="like_report_id" placeholder="enter Report ID"></td>
+                    <td><input type="text" name="report_id" placeholder="enter Report ID"></td>
                 </tr>
                 <tr>
                     <th>
                         User ID:
                     </th>
-                    <td><input type="text" name="like_user_id" placeholder="Enter User ID"></td>
+                    <td><input type="text" name="user_id" placeholder="Enter User ID"></td>
+                </tr>
+                <tr>
+                    <th>Value</th>
+                    <td><input type="text" name="value" placeholder="1 for like, 0 for dislike"></td>
                 </tr>
                 <tr>
                     <td colspan="2"><input type="submit" value="Add Like">
                 </tr>
             </table>
         </form>
-         <h2>Add Dislike</h2>
-        <form  method="post" action="/add_dislike">
+
+
+
+     <!-- ++++++++++++++++++++++++++++++++++ Get Reports Like ++++++++++++++++++++++++++++++  -->
+
+        <h2>Get Report Like</h2>
+        <form method="post" action="/get_like_count">
             <table>
                 <tr>
-                    <th>Report ID</th>
-                    <td><input type="text" name="dislike_report_id" placeholder="enter Report ID"></td>
+                    <th>Report Id</th>
+                    <td>
+                        <input type="text" name="report_id" placeholder="Enter Report Id">
+                    </td>
                 </tr>
                 <tr>
-                    <th>
-                        User ID:
-                    </th>
-                    <td><input type="text" name="dislike_user_id" placeholder="Enter User ID"></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><input type="submit" value="Add Dislikes">
+                    <td colspan="2"><input type="submit" value="Get Report Like">
                 </tr>
             </table>
         </form>
+
+
+    
+
+
+
+ <!-- ++++++++++++++++++++++++++++++++++ Add Thanks ++++++++++++++++++++++++++++++  -->
+
+
         <h2>Add Thanks</h2>
         <form  method="post" action="/add_thanks">
             <table>
@@ -103,9 +122,17 @@
                 </tr>
             </table>
         </form>
+
+
+        <!-- ++++++++++++++++++++++++++++++++++ Get Reports ++++++++++++++++++++++++++++++  -->
+
         <h2>Get Reports</h2>
          <form  method="post" action="/get_reports">
             <table>
+             <tr>
+                    <th>Boat Id</th>
+                    <td><input type="text" name="boat_id" placeholder="Enter Boat Id"></td>
+                </tr>
                 <tr>
                     <th>Latitude</th>
                     <td><input type="text" name="get_lat" placeholder="enter lat"></td>
@@ -117,14 +144,18 @@
                     <td><input type="text" name="get_lng" placeholder="Enter lng"></td>
                 </tr>
                 <tr>
-                    <th>Radius</th>
-                    <td><input type="text" name="get_radius" placeholder="Enter Radius"></td>
+                    <th>Boat Type</th>
+                    <td><input type="text" name="boat_type" placeholder="Enter Boat Type"></td>
                 </tr>
                 <tr>
                     <td colspan="2"><input type="submit" value="Get Reports">
                 </tr>
             </table>
         </form>
+
+
+        <!-- ++++++++++++++++++++++++++++++++++ ADD USER FORM ++++++++++++++++++++++++++++++  -->
+
         <h2>Add User</h2>
         <form method="post" action="/add_profile">
             <table>
