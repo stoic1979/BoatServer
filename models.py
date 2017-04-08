@@ -19,7 +19,7 @@ class User(db.Model):
 
     id = db.Column(db.BigInteger, primary_key=True)
     nickname = db.Column(db.String(60), unique=True)
-    email = db.Column(db.String(60), unique=True)
+    # email = db.Column(db.String(60), unique=True)
     phone = db.Column(db.String(20), unique=True)
     town = db.Column(db.String(60))
     district = db.Column(db.String(16))
@@ -40,19 +40,18 @@ class User(db.Model):
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False)
 
 
-    def __init__(self, phone, vcode):
-        self.phone = phone
-        self.vcode = vcode
+    # def __init__(self, phone, vcode):
+    #     self.phone = phone
+    #     self.vcode = vcode
 
-    """
-    def __init__(self, nickname, email, town, district, dob, boatinfo):
+    
+    def __init__(self, nickname, town, district, dob, boatinfo):
         self.nickname = nickname
-        self.email = email
         self.town = town
         self.district = district
         self.dob = dob
         self.boatinfo = boatinfo
-    """
+    
 
     def __repr__(self):
         return '<User:  #%r>' % self.id
@@ -97,6 +96,7 @@ class Report(db.Model):
 
     id = db.Column(db.BigInteger, primary_key=True)
     boat = db.Column(db.BigInteger, ForeignKey('boat.id'))
+    name = db.Column(db.String(60))
     lat = db.Column(db.Float, unique=True)
     lng = db.Column(db.Float, unique=True)
     user = db.Column(db.BigInteger, ForeignKey('user.id'))
@@ -104,8 +104,9 @@ class Report(db.Model):
     # timestamp
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False )
 
-    def __init__(self, boat, lat, lng, btype):
+    def __init__(self, boat, name, lat, lng, btype):
         self.boat = boat
+        self.name = name
         self.lat = lat
         self.lng = lng
         self.btype = btype
@@ -142,6 +143,10 @@ class Thanks(db.Model):
 
     # timestamp
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False )
+
+    def __init__(self, report, user):
+        self.report = report
+        self.user = user
 
 
     def __repr__(self):

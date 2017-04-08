@@ -194,15 +194,17 @@ def apidemo():
 
 @app.route("/save_police_boat", methods=['POST'])
 def api_post():
-
-    boat_number = request.form['boat_number']
-    btype = request.form['btype']
-    
-    #boat = Boat("assd", 1234)
-    boat = Boat(boat_number, btype)
-    db.session.add(boat)
-    db.session.commit()
-    return "boat_number: %s is saved" % (boat_number)
+    try:
+        boat_name = request.form['boat_name']
+        btype = request.form['btype']
+         #boat = Boat("assd", 1234)
+        boat = Boat(boat_name, btype)
+        db.session.add(boat)
+        db.session.commit()
+    except Exception as exp:
+        print "=============> got exp", exp
+        print(traceback.print_stack())
+    return "boat_name: %s is saved" % (boat_name)
 
 @app.route("/location")
 def location():
@@ -228,12 +230,11 @@ def add_profile():
     print "======add_profile()::",request.form
     try:
         Nickname = request.form['nickname']
-        Email = request.form['email']
         Town = request.form['town']
         District = request.form['district']
         Dob = request.form['dob']
         Boatinfo = request.form['boatinfo']
-        Profile = User(Nickname, Email, Town, District, Dob, Boatinfo)
+        Profile = User(Nickname, Town, District, Dob, Boatinfo)
         db.session.add(Profile)
         db.session.commit()
     except Exception as exp:
@@ -286,24 +287,27 @@ def add_like():
 
 @app.route("/add_thanks", methods=['POST'])
 def add_thanks():
-    print "=====add_thanks():==", request.form
     try:
-        thanks_report_id = request.form['thanks_report_id']
-        thanks_user_id = request.form['thanks_user_id']
+        report_id = request.form['thanks_report_id']
+        user_id = request.form['thanks_user_id']
+        thanks = Thanks(report_id, user_id)
+        db.session.add(thanks)
+        db.session.commit()
     except Exception as exp:
         print "exp:", exp
         print(traceback.format_exc())
     return "Thanks Added"
 
-@app.route("/get_reports", methods=['POST'])
-def get_reports():
-    print "=====get_reports():==", request.form
+@app.route("/save_reports", methods=['POST'])
+def save_reports():
+    print "=====save_reports():==", request.form
     try:
         boat_id = request.form['boat_id']
+        name = request.form['boat_name']
         get_lat = request.form['get_lat']
         get_lng = request.form['get_lng']
         boat_type = request.form['boat_type']
-        getreport = Report(boat_id, get_lat, get_lng, boat_type)
+        getreport = Report(boat_id, name, get_lat, get_lng, boat_type)
         db.session.add(getreport)
         db.session.commit()
     except Exception as exp:
@@ -311,7 +315,18 @@ def get_reports():
         print(traceback.format_exc())
     return "Get Reports.."
 
-
+@app.route("/get_report")
+def get_report():
+    print "======== get_report() : ======= ", request.form
+    # try:
+    #     lat = request.form['get_lat']
+    #     lng = request.form['get_lng']
+    #     radius = request.form['radius']
+    #     print "latitude : %s " % lat
+    # except Exception as exp:
+    #     print "exp:",exp
+    #     print(traceback.format_exc())
+    return "done"
 
  
 
