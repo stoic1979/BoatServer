@@ -10,11 +10,11 @@ from models import User, Boat, Report, Likes, Thanks, db, app
 from utils import *
 from flask import jsonify 
 import traceback
-
+from math import sin, cos, atan2, sqrt, radians
 import os
 import json
 
-
+lng1 = radians(21.012287)
 # setup REST apis
 api = Api(app)
 
@@ -194,10 +194,11 @@ def apidemo():
 
 @app.route("/save_police_boat", methods=['POST'])
 def api_post():
+    print "===================save_police_boat :", request.form
     try:
         boat_name = request.form['boat_name']
         btype = request.form['btype']
-         #boat = Boat("assd", 1234)
+        #boat = Boat("assd", 1234)
         boat = Boat(boat_name, btype)
         db.session.add(boat)
         db.session.commit()
@@ -302,31 +303,76 @@ def add_thanks():
 def save_reports():
     print "=====save_reports():==", request.form
     try:
-        boat_id = request.form['boat_id']
-        name = request.form['boat_name']
+        boat_name = request.form['boat_name']
+        boat_type = int(request.form['boat_type'])
         get_lat = request.form['get_lat']
         get_lng = request.form['get_lng']
-        boat_type = request.form['boat_type']
-        getreport = Report(boat_id, name, get_lat, get_lng, boat_type)
-        db.session.add(getreport)
+        user_id = int(request.form['user_id'])
+        savereport = Report(boat_name, boat_type, get_lat, get_lng, user_id)
+        db.session.add(savereport)
         db.session.commit()
     except Exception as exp:
         print "exp:", exp
         print(traceback.format_exc())
-    return "Get Reports.."
+    return "Save Reports.."
 
-@app.route("/get_report")
+@app.route("/get_report", methods=['POST'])
 def get_report():
     print "======== get_report() : ======= ", request.form
-    # try:
-    #     lat = request.form['get_lat']
-    #     lng = request.form['get_lng']
-    #     radius = request.form['radius']
-    #     print "latitude : %s " % lat
-    # except Exception as exp:
-    #     print "exp:",exp
-    #     print(traceback.format_exc())
+    try:
+        lat = request.form['get_lat']
+        lng = request.form['get_lng']
+        radius = request.form['radius']
+        print "latitude : %s " % lat
+        #R = 6373.0 
+        # approximate radius of earth in KM
+
+        lat1 = radians(lat)
+        lng1 = radians(lng)
+        lat2 = radians(52.406374)
+        lng2 = radians(16.9251681)
+
+        dlng = lng2 - lng1
+        dlat = lat2 - lat1
+
+        a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlng / 2)**2
+        c = 2 * atan2(sqrt(a), sqrt(1-a))
+
+        distance = radius * c
+
+        print ("Result", distance)
+        #print ("Should be :", 278.546,"km")
+    except Exception as exp:
+        print "exp:",exp
+        print(traceback.format_exc())
     return "done"
+
+@app.route("/get_distance")
+def  get_distance():
+    print "Going to calculate distance between given longitudes and latitudes"
+
+    report_distance = Report.query.all()
+    for report in report_distance:
+        print "===========" , report.boat_name
+    R = 6373.0 
+    # approximate radius of earth in KM
+
+    lat1 = radians(30.74659)
+    lng1 = radians(76.78532)
+    lat2 = radians(30.69479)
+    lng2 = radians(76.79876)
+
+    dlng = lng2 - lng1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlng / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1-a))
+
+    distance = R * c * 100056
+
+    print ("Result", distance)
+    print ("Should be :", 278546,"m")
+    return "distance : %d"  % distance
 
  
 
@@ -348,6 +394,8 @@ def get_police_boat_locations():
         print "Police Boat Location: ", location.lat
         print "Police Boat Location: ", location.lng
     return "get police boat locations"
+
+
 
 
 #################################################################

@@ -57,7 +57,7 @@
         <!-- ++++++++++++++++++++++++++++++++++ verify phone no ++++++++++++++++++++++++++++++  -->
 
         <h2>verify phone no</h2>
-        <form  action="/verify_phoneno">
+        <form  method="post" action="/verify_phoneno">
             <table>
                 <tr>
                     <th>
@@ -173,17 +173,20 @@
         <!-- ++++++++++++++++++++++++++++++++++ Save Reports ++++++++++++++++++++++++++++++  -->
 
         <h2>Save Reports</h2>
-         <form  method="post" action="/get_reports">
+         <form  method="post" action="/save_reports">
             <table>
-             <tr>
+             <!-- <tr>
                     <th>Boat Id</th>
                     <td><input type="text" name="boat_id" placeholder="Enter Boat Id"></td>
-                </tr>
+                </tr> -->
                 <tr>
                     <th>Boat name</th>
-                    <td><input type="text" name="boat_name " placeholder="Enter Boat Id"></td>
+                    <td><input type="text" name="boat_name" placeholder="Enter Boat Name"></td>
                 </tr>
-
+                <tr>
+                    <th>Boat Type</th>
+                    <td><input type="text" name="boat_type" placeholder="Enter Boat Type"></td>
+                </tr>
                 <tr>
                     <th>Latitude</th>
                     <td><input type="text" name="get_lat" placeholder="enter lat"></td>
@@ -195,8 +198,8 @@
                     <td><input type="text" name="get_lng" placeholder="Enter lng"></td>
                 </tr>
                 <tr>
-                    <th>Boat Type</th>
-                    <td><input type="text" name="boat_type" placeholder="Enter Boat Type"></td>
+                    <th>User Id</th>
+                    <td><input type="text" name="user_id" placeholder="Enter User Id"></td>
                 </tr>
                 <tr>
                     <td colspan="2"><input type="submit" value="Save Reports">
@@ -209,7 +212,7 @@
 
 
         <h2>Get Report</h2>
-        <form action="/get_report">
+        <form method="post" action="/get_report">
             <table>
                <tr>
                     <th>Latitude</th>

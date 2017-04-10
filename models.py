@@ -40,17 +40,17 @@ class User(db.Model):
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False)
 
 
-    # def __init__(self, phone, vcode):
-    #     self.phone = phone
-    #     self.vcode = vcode
+    def __init__(self, phone, vcode):
+        self.phone = phone
+        self.vcode = vcode
 
     
-    def __init__(self, nickname, town, district, dob, boatinfo):
-        self.nickname = nickname
-        self.town = town
-        self.district = district
-        self.dob = dob
-        self.boatinfo = boatinfo
+    # def __init__(self, nickname, town, district, dob, boatinfo):
+    #     self.nickname = nickname
+    #     self.town = town
+    #     self.district = district
+    #     self.dob = dob
+    #     self.boatinfo = boatinfo
     
 
     def __repr__(self):
@@ -95,8 +95,9 @@ class Report(db.Model):
     __tablename__ = 'report'
 
     id = db.Column(db.BigInteger, primary_key=True)
-    boat = db.Column(db.BigInteger, ForeignKey('boat.id'))
-    name = db.Column(db.String(60))
+    #boat = db.Column(db.BigInteger, ForeignKey('boat.id'))
+    boat_name = db.Column(db.String(60))
+    boat_type = db.Column(db.Integer)
     lat = db.Column(db.Float, unique=True)
     lng = db.Column(db.Float, unique=True)
     user = db.Column(db.BigInteger, ForeignKey('user.id'))
@@ -104,12 +105,12 @@ class Report(db.Model):
     # timestamp
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False )
 
-    def __init__(self, boat, name, lat, lng, btype):
-        self.boat = boat
-        self.name = name
+    def __init__(self, boat_name, boat_type, lat, lng, user):
+        self.boat_name = boat_name
+        self.boat_type = boat_type
         self.lat = lat
         self.lng = lng
-        self.btype = btype
+        self.user = user
 
     def __repr__(self):
         return '<Report:  #%r>' % self.id
