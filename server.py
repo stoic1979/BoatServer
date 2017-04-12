@@ -14,6 +14,8 @@ from math import sin, cos, atan2, sqrt, radians
 import os
 import json
 
+from utils import dlog
+
 lng1 = radians(21.012287)
 # setup REST apis
 api = Api(app)
@@ -127,7 +129,7 @@ class CodeResource(Resource):
         return ret, 201
 
 # setting up URL end point handlers
-#api.add_resource(PhoneResource, '/verify_phoneno')
+#api.add_resource(PhoneResourc)
 #api.add_resource(CodeResource, '/verify_code')
 api.add_resource(HomeResource, '/')
 
@@ -146,7 +148,9 @@ def verify_phoneno():
 
     ret = {"err": 0, "msg": "Received phone no., will send 6 digit verification code by SMS"}
 
-    phone = request.form['phone']
+    phone = request.form['phoneno']
+
+    dlog("Verigfuying phone no.: %s" % phone)
 
     # ensure that phone no. doesn't exist
     if User.query.filter_by(phone=phone).first():
@@ -163,7 +167,7 @@ def verify_phoneno():
 def verify_code():
     ret = {"err": 0, "msg": "Verification done" }
 
-    phone = request.form['phone']
+    phone = request.form['phoneno']
     vdone = True
 
     # checking verification code
@@ -302,6 +306,13 @@ def add_thanks():
 @app.route("/save_reports", methods=['POST'])
 def save_reports():
     print "=====save_reports():==", request.form
+    getreport = Report.query.all()
+    for report in getreport:
+        print "fatching Report name :", report.boat_name
+        print "fatching Report boat type :", report.boat_type
+        print "fatching Report lat :", report.lat
+        print "fatching Report lng :", report.lng
+        print "fatching Report user :", report.user
     try:
         boat_name = request.form['boat_name']
         boat_type = int(request.form['boat_type'])
@@ -316,36 +327,51 @@ def save_reports():
         print(traceback.format_exc())
     return "Save Reports.."
 
+# @app.route("/report_fatching")
+# def report_fatching():
+#     reports = []
+#     getreport = Report.query.all()
+#     for report in getreport:
+#         reports.append(report.serialize)
+#         print "fatching Report name :", report.boat_name
+#         print "fatching Report boat type :", report.boat_type
+#         print "fatching Report lat :", report.lat
+#         print "fatching Report lng :", report.lng
+#         print "fatching Report user id :", report.user
+#         ret = { "err": 0, "reports": reports}
+#     return json.dumps(ret)
+
 @app.route("/get_report", methods=['POST'])
 def get_report():
     print "======== get_report() : ======= ", request.form
+    ret = { "err": 0, "reports": []}
     try:
-        lat = request.form['get_lat']
-        lng = request.form['get_lng']
+        lat = float(request.form['lat'])
+        lng = float(request.form['lng'])
         radius = request.form['radius']
-        print "latitude : %s " % lat
-        #R = 6373.0 
-        # approximate radius of earth in KM
+        reports = []
+        getreport = Report.query.all()
+        for report in getreport:
+            if get_geo_distance(lat, lng, report.lat, report.lng) < radius:
+                reports.append(report.serialize)
 
-        lat1 = radians(lat)
-        lng1 = radians(lng)
-        lat2 = radians(52.406374)
-        lng2 = radians(16.9251681)
-
-        dlng = lng2 - lng1
-        dlat = lat2 - lat1
-
-        a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlng / 2)**2
-        c = 2 * atan2(sqrt(a), sqrt(1-a))
-
-        distance = radius * c
-
-        print ("Result", distance)
-        #print ("Should be :", 278.546,"km")
+        ret["reports"] = reports
     except Exception as exp:
         print "exp:",exp
         print(traceback.format_exc())
-    return "done"
+        ret["err"] = 1
+        ret["msg"] = "Report Error"
+    return json.dumps(ret)
+
+def get_geo_distance(lat1, lng1, lat2, lng2):
+    R = 6373.0
+    dlng = lng2 - lng1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlng / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1-a))
+
+    return R * c * 1000
 
 @app.route("/get_distance")
 def  get_distance():
@@ -362,13 +388,7 @@ def  get_distance():
     lat2 = radians(30.69479)
     lng2 = radians(76.79876)
 
-    dlng = lng2 - lng1
-    dlat = lat2 - lat1
-
-    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlng / 2)**2
-    c = 2 * atan2(sqrt(a), sqrt(1-a))
-
-    distance = R * c * 100056
+    distance = get_geo_distance(lat1, lng1, lat2, lng2)
 
     print ("Result", distance)
     print ("Should be :", 278546,"m")

@@ -61,7 +61,7 @@ class User(db.Model):
        """Return object data in easily serializeable format"""
        return {
            'phone': self.phone,
-           'vcode': self.vcode
+           'vcode': self.vcode,
        }
 
 
@@ -114,6 +114,17 @@ class Report(db.Model):
 
     def __repr__(self):
         return '<Report:  #%r>' % self.id
+
+    @property
+    def serialize(self):
+       """Return object data in easily serializeable format"""
+       return {
+           'boat_name': self.boat_name,
+           'boat_type': self.boat_type,
+           'lat': self.lat,
+           'lng': self.lng,
+           'user': self.user
+       }
 
 
 class Likes(db.Model):

@@ -5,12 +5,21 @@
 import random
 import string
 
+#DEBUG = True
+DEBUG = False
+
 def get_random_str(length):
     """
     function to generate random string of given length
     """
     str_range = string.lowercase + string.uppercase + string.digits
     return ''.join(random.sample(str_range, length))
+
+
+def dlog(msg):
+ 	if not DEBUG:
+ 		return
+ 	print (")==> DLOG :: %s " % msg)
 
 ################################
 #                              #
