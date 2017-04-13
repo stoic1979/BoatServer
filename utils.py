@@ -5,8 +5,8 @@
 import random
 import string
 
-#DEBUG = True
-DEBUG = False
+DEBUG = True
+#DEBUG = False
 
 def get_random_str(length):
     """

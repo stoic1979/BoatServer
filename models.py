@@ -45,23 +45,34 @@ class User(db.Model):
         self.vcode = vcode
 
     
-    # def __init__(self, nickname, town, district, dob, boatinfo):
-    #     self.nickname = nickname
-    #     self.town = town
-    #     self.district = district
-    #     self.dob = dob
-    #     self.boatinfo = boatinfo
+    def __init__(self, nickname, town, district, dob, boatinfo):
+        self.nickname = nickname
+        self.town = town
+        self.district = district
+        self.dob = dob
+        self.boatinfo = boatinfo
     
 
     def __repr__(self):
         return '<User:  #%r>' % self.id
 
+    # @property
+    # def serialize(self):
+    #    """Return object data in easily serializeable format"""
+    #    return {
+    #         'id': self.id,
+    #        'phone': self.phone,
+    #        'vcode': self.vcode
+    #    }
     @property
     def serialize(self):
        """Return object data in easily serializeable format"""
        return {
-           'phone': self.phone,
-           'vcode': self.vcode,
+            'nickname': self.nickname,
+           'town': self.town,
+           'district': self.district,
+           'dob': self.dob,
+           'boatinfo': self.boatinfo   
        }
 
 

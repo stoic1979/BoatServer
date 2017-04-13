@@ -63,6 +63,7 @@ class PhoneResource(Resource):
                 "err": 0, 
                 "msg": "Received phone no., will send 6 digit verification code by SMS"
              }
+        
 
         # ensure that phone no. doesn't exist
         if User.query.filter_by(phone=phone).first():
@@ -72,7 +73,7 @@ class PhoneResource(Resource):
             self.createUser(phone)
 
         return ret, 201
-
+        #return json.dumps(ret)
 
 class PoliceBoatResource(Resource):
     """
@@ -143,12 +144,30 @@ def createUser(phone):
     db.session.add(user)
     db.session.commit()
 
+    #dlog("user id: %d" % user.id)
+    print "user id:===> : %d" % user.id
+
+    return user.id
+
 @app.route("/verify_phoneno" , methods=['POST'])
 def verify_phoneno():
 
     ret = {"err": 0, "msg": "Received phone no., will send 6 digit verification code by SMS"}
 
+    """
+    user = User.query.filter_by(phone=phone).first()
+    
+
+    
+    for user in User.query.all():
+        user = User.query.filter_by(phone=phone).first()
+    print "user id:===> : %d" % user.id
+
+    #
+    """
     phone = request.form['phoneno']
+
+
 
     dlog("Verigfuying phone no.: %s" % phone)
 
@@ -157,7 +176,7 @@ def verify_phoneno():
         ret["err"] = 1
         ret["msg"] = "Phone no. already exist"
     else:
-        createUser(phone)
+        ret["uid"] = createUser(phone)
 
     return json.dumps(ret)
 
@@ -175,10 +194,12 @@ def verify_code():
     if not user:
         ret["err"] = 1
         ret["msg"] = "Invalid phone numner"
+
     elif user.vdone == True:
         ret["err"] = 2
         ret["msg"] = "Verification already done !!!"
     else:
+        ret["uid"] = user.id
         user.vdone = True
         db.session.add(user)
         db.session.commit()
@@ -233,6 +254,8 @@ def save_location():
 @app.route("/add_profile", methods=['POST'])
 def add_profile():
     print "======add_profile()::",request.form
+    ret = {"err": 0, "msg": "Usesr profile is saved"}
+    
     try:
         Nickname = request.form['nickname']
         Town = request.form['town']
@@ -242,10 +265,16 @@ def add_profile():
         Profile = User(Nickname, Town, District, Dob, Boatinfo)
         db.session.add(Profile)
         db.session.commit()
+        user = User.query.filter_by(nickname=Nickname).first()
+        for user in User.query.all():
+            users.append(user.serialize)
+        ret["profile"] = user.nickname
     except Exception as exp:
         print "exp:", exp
         print(traceback.format_exc())
-    return "Profile Added"
+    # user = User.query.filter_by(nickname=Nickname).first()
+    # ret["profile"] = user.nickname
+    return json.dumps(ret)
 
 
 def get_report_like_count(report_id):
