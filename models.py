@@ -71,7 +71,7 @@ class User(db.Model):
             'nickname': self.nickname,
            'town': self.town,
            'district': self.district,
-           'dob': self.dob,
+           #'dob': self.dob,
            'boatinfo': self.boatinfo   
        }
 

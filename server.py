@@ -257,23 +257,34 @@ def add_profile():
     ret = {"err": 0, "msg": "Usesr profile is saved"}
     
     try:
-        Nickname = request.form['nickname']
-        Town = request.form['town']
-        District = request.form['district']
-        Dob = request.form['dob']
-        Boatinfo = request.form['boatinfo']
-        Profile = User(Nickname, Town, District, Dob, Boatinfo)
-        db.session.add(Profile)
-        db.session.commit()
-        user = User.query.filter_by(nickname=Nickname).first()
-        for user in User.query.all():
-            users.append(user.serialize)
-        ret["profile"] = user.nickname
+        uid = int(request.form['uid'])
+        nickname = request.form['nickname']
+        town = request.form['town']
+        district = request.form['district']
+        dob = request.form['dob']
+        boatinfo = request.form['boatinfo']
+        user = User.query.filter_by(id=uid).first()
+
+        if not user:
+            ret["err"] = 2
+            ret["msg"] = "User not found with given id=%d" % uid
+        else:
+            user.nickname = nickname
+            user.town = town
+            user.district = district
+            user.dob = dob
+            user.boatinfo = boatinfo
+
+            # save and update user 
+            db.session.add(user)
+            db.session.commit()
+            ret["profile"] = user.serialize
     except Exception as exp:
         print "exp:", exp
         print(traceback.format_exc())
-    # user = User.query.filter_by(nickname=Nickname).first()
-    # ret["profile"] = user.nickname
+        ret["err"] = 1 
+        ret["msg"] = "Got exception %s" % exp
+     
     return json.dumps(ret)
 
 
