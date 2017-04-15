@@ -27,6 +27,6 @@ def dlog(msg):
 #                              #
 ################################
 if __name__ == "__main__":
-    print get_random_str(6)
-    print get_random_str(10)
-    print get_random_str(12)
+    print (get_random_str(6))
+    print (get_random_str(10))
+    print (get_random_str(12))
