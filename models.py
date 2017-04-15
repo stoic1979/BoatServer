@@ -178,7 +178,7 @@ class Thanks(db.Model):
 
 
 try:
-    print "================================= create_all ==================================="
+    print ("================================= create_all ===================================")
     db.create_all()
 except:
     pass
@@ -195,4 +195,4 @@ if __name__ == "__main__":
     db.session.add(user)
     db.session.commit()
     """
-    print "Users:",  User.query.all()
+    print ("Users:",  User.query.all())
