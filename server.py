@@ -306,7 +306,7 @@ def get_like_count():
         ret["report_id"] = report_id
         ret["likes_count"] = get_report_like_count(report_id)
     except Exception as exp:
-        print "exp:", exp
+        print ("exp:", exp)
         print(traceback.format_exc())
         ret["error"] = 1
         ret["msg"] = "Got exception: %s" % exp
