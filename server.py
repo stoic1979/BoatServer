@@ -355,7 +355,7 @@ def save_reports():
         print "fatching Report user :", report.user
     try:
         boat_name = request.form['boat_name']
-        boat_type = int(request.form['boat_type'])
+        boat_type = request.form['boat_type']
         get_lat = request.form['get_lat']
         get_lng = request.form['get_lng']
         user_id = int(request.form['user_id'])
