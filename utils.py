@@ -12,7 +12,7 @@ def get_random_str(length):
     """
     function to generate random string of given length
     """
-    str_range = string.lowercase + string.uppercase + string.digits
+    str_range = string.ascii_lowercase + string.ascii_uppercase + string.digits
     return ''.join(random.sample(str_range, length))
 
 
