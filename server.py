@@ -27,7 +27,7 @@ class HomeResource(Resource):
             for user in User.query.all():
                 users.append(user.serialize)
         except Exception as exp:
-            print "=============> got exp", exp
+            print( "=============> got exp", exp)
             traceback.print_stack()
 
 
@@ -42,7 +42,7 @@ class PhoneResource(Resource):
 
     def createUser(self, phone):
         
-        print "Creating phone validation req.: ", phone
+        print ("Creating phone validation req.: ", phone)
 
         verification_code = get_random_str(6)
         user = User(phone, verification_code)
@@ -137,7 +137,7 @@ api.add_resource(HomeResource, '/')
 
 def createUser(phone):
         
-    print "Creating phone validation req.: ", phone
+    print ("Creating phone validation req.: ", phone)
 
     vcode = get_random_str(6)
     user = User(phone, vcode)
@@ -145,7 +145,7 @@ def createUser(phone):
     db.session.commit()
 
     #dlog("user id: %d" % user.id)
-    print "user id:===> : %d" % user.id
+    print ("user id:===> : %d" % user.id)
 
     return user.id
 
@@ -219,7 +219,7 @@ def apidemo():
 
 @app.route("/save_police_boat", methods=['POST'])
 def api_post():
-    print "===================save_police_boat :", request.form
+    print ("===================save_police_boat :", request.form)
     try:
         boat_name = request.form['boat_name']
         btype = request.form['btype']
@@ -228,7 +228,7 @@ def api_post():
         db.session.add(boat)
         db.session.commit()
     except Exception as exp:
-        print "=============> got exp", exp
+        print ("=============> got exp", exp)
         print(traceback.print_stack())
     return "boat_name: %s is saved" % (boat_name)
 
@@ -253,7 +253,7 @@ def save_location():
 
 @app.route("/add_profile", methods=['POST'])
 def add_profile():
-    print "======add_profile()::",request.form
+    print ("======add_profile()::",request.form)
     ret = {"err": 0, "msg": "Usesr profile is saved"}
     
     try:
@@ -280,7 +280,7 @@ def add_profile():
             db.session.commit()
             ret["profile"] = user.serialize
     except Exception as exp:
-        print "exp:", exp
+        print ("exp:", exp)
         print(traceback.format_exc())
         ret["err"] = 1 
         ret["msg"] = "Got exception %s" % exp
@@ -325,7 +325,7 @@ def add_like():
         db.session.add(like)
         db.session.commit()
     except Exception as exp:
-        print "exp:", exp
+        print ("exp:", exp)
         print(traceback.format_exc())
     return "Likes Add"
 
@@ -339,20 +339,20 @@ def add_thanks():
         db.session.add(thanks)
         db.session.commit()
     except Exception as exp:
-        print "exp:", exp
+        print ("exp:", exp)
         print(traceback.format_exc())
     return "Thanks Added"
 
 @app.route("/save_reports", methods=['POST'])
 def save_reports():
-    print "=====save_reports():==", request.form
+    print ("=====save_reports():==", request.form)
     getreport = Report.query.all()
     for report in getreport:
-        print "fatching Report name :", report.boat_name
-        print "fatching Report boat type :", report.boat_type
-        print "fatching Report lat :", report.lat
-        print "fatching Report lng :", report.lng
-        print "fatching Report user :", report.user
+        print ("fatching Report name :", report.boat_name)
+        print ("fatching Report boat type :", report.boat_type)
+        print ("fatching Report lat :", report.lat)
+        print ("fatching Report lng :", report.lng)
+        print ("fatching Report user :", report.user)
     try:
         boat_name = request.form['boat_name']
         boat_type = request.form['boat_type']
@@ -363,7 +363,7 @@ def save_reports():
         db.session.add(savereport)
         db.session.commit()
     except Exception as exp:
-        print "exp:", exp
+        print ("exp:", exp)
         print(traceback.format_exc())
     return "Save Reports.."
 
@@ -383,7 +383,7 @@ def save_reports():
 
 @app.route("/get_report", methods=['POST'])
 def get_report():
-    print "======== get_report() : ======= ", request.form
+    print ("======== get_report() : ======= ", request.form)
     ret = { "err": 0, "reports": []}
     try:
         lat = float(request.form['lat'])
@@ -397,7 +397,7 @@ def get_report():
 
         ret["reports"] = reports
     except Exception as exp:
-        print "exp:",exp
+        print ("exp:",exp)
         print(traceback.format_exc())
         ret["err"] = 1
         ret["msg"] = "Report Error"
@@ -414,12 +414,12 @@ def get_geo_distance(lat1, lng1, lat2, lng2):
     return R * c * 1000
 
 @app.route("/get_distance")
-def  get_distance():
-    print "Going to calculate distance between given longitudes and latitudes"
+def get_distance():
+    print ("Going to calculate distance between given longitudes and latitudes")
 
     report_distance = Report.query.all()
     for report in report_distance:
-        print "===========" , report.boat_name
+        print ("===========" , report.boat_name)
     R = 6373.0 
     # approximate radius of earth in KM
 
@@ -441,7 +441,7 @@ def get_police_boats():
 
     boats = PoliceBoat.query.all()
     for boat in boats:
-        print "Boat Number: ", boat.boat_number
+        print ("Boat Number: ", boat.boat_number)
 
     return "get the police Boat"
 #get_police_boat_locations
@@ -450,9 +450,9 @@ def get_police_boats():
 def get_police_boat_locations():
     boat_locations = PoliceBoatLocation.query.all()
     for location in boat_locations:
-        print "Police Boat Location: ", location.police_boat
-        print "Police Boat Location: ", location.lat
-        print "Police Boat Location: ", location.lng
+        print ("Police Boat Location: ", location.police_boat)
+        print ("Police Boat Location: ", location.lat)
+        print ("Police Boat Location: ", location.lng)
     return "get police boat locations"
 
 
