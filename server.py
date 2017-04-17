@@ -346,6 +346,7 @@ def add_thanks():
 @app.route("/save_reports", methods=['POST'])
 def save_reports():
     print ("=====save_reports():==", request.form)
+    ret = {"err": 0, "msg": "Report id is save"}
     getreport = Report.query.all()
     for report in getreport:
         print ("fatching Report name :", report.boat_name)
@@ -365,7 +366,8 @@ def save_reports():
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
-    return "Save Reports.."
+    ret["Report id"] = report.id
+    return json.dumps[ret]
 
 # @app.route("/report_fatching")
 # def report_fatching():
