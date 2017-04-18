@@ -369,7 +369,7 @@ def save_reports():
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
-    return json.dumps[ret]
+    return json.dumps(ret)
 
 # @app.route("/report_fatching")
 # def report_fatching():
