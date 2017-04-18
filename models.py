@@ -130,6 +130,7 @@ class Report(db.Model):
     def serialize(self):
        """Return object data in easily serializeable format"""
        return {
+           'report_id': self.id,
            'boat_name': self.boat_name,
            'boat_type': self.boat_type,
            'lat': self.lat,

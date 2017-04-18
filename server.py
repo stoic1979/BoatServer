@@ -360,13 +360,15 @@ def save_reports():
         get_lat = request.form['get_lat']
         get_lng = request.form['get_lng']
         user_id = int(request.form['user_id'])
-        savereport = Report(boat_name, boat_type, get_lat, get_lng, user_id)
-        db.session.add(savereport)
+
+        # saving report
+        report = Report(boat_name, boat_type, get_lat, get_lng, user_id)
+        db.session.add(report)
         db.session.commit()
+        ret["report_id"] = report.id
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
-    ret["Report id"] = report.id
     return json.dumps[ret]
 
 # @app.route("/report_fatching")
