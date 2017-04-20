@@ -187,10 +187,11 @@ def verify_code():
     ret = {"err": 0, "msg": "Verification done" }
 
     phone = request.form['phoneno']
+    vcode = request.form['vcode']
     vdone = True
 
     # checking verification code
-    user = User.query.filter_by(phone=phone).first()
+    user = User.query.filter_by(phone=phone).filter_by(vcode=vcode).first()
     if not user:
         ret["err"] = 1
         ret["msg"] = "Invalid phone numner"
@@ -392,7 +393,7 @@ def get_report():
     try:
         lat = float(request.form['lat'])
         lng = float(request.form['lng'])
-        radius = request.form['radius']
+        radius = float(request.form['radius'])
         reports = []
         getreport = Report.query.all()
         for report in getreport:
