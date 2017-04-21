@@ -396,13 +396,13 @@ def get_report():
         radius = float(request.form['radius'])
         reports = []
         getreport = Report.query.all()
-        print "getreport: ", getreport
-        print
+        #print "getreport: ", getreport
+        #print
         for report in getreport:
             distance = get_geo_distance(lat, lng, report.lat, report.lng)
-            print "distance:", distance, " radius:", radius
+            #print "distance:", distance, " radius:", radius
             if distance <= radius:
-                print "adding report", report
+                #print "adding report", report
                 reports.append(report.serialize)
 
         ret["reports"] = reports
