@@ -135,8 +135,8 @@ class Report(db.Model):
            'boat_type': self.boat_type,
            'lat': self.lat,
            'lng': self.lng,
-           'user': self.user
-           #'ts': self.ts
+           'user': self.user,
+           'ts': str(self.ts)
        }
 
 

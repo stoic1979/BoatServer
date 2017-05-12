@@ -494,7 +494,7 @@ def get_report():
 
         ret["reports"] = reports
     except Exception as exp:
-        print ("exp:",exp)
+        print ("[get_report] :: exp:", exp)
         print(traceback.format_exc())
         ret["err"] = 1
         ret["msg"] = "Report Error"
