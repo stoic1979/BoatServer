@@ -23,7 +23,7 @@ class User(db.Model):
     phone = db.Column(db.String(20), unique=True)
     town = db.Column(db.String(60))
     district = db.Column(db.String(16))
-    dob = db.Column(db.Date)
+    dob = db.Column(db.String(64))
     boatinfo = db.Column(db.String(120))
 
     # todo - work on picture feature of profile later !!!!!
@@ -40,17 +40,17 @@ class User(db.Model):
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False)
 
 
-    def __init__(self, phone, vcode):
-        self.phone = phone
-        self.vcode = vcode
+    # def __init__(self, phone, vcode):
+    #     self.phone = phone
+    #     self.vcode = vcode
 
     
-    # def __init__(self, nickname, town, district, dob, boatinfo):
-    #     self.nickname = nickname
-    #     self.town = town
-    #     self.district = district
-    #     self.dob = dob
-    #     self.boatinfo = boatinfo
+    def __init__(self, nickname, town, district, dob, boatinfo):
+        self.nickname = nickname
+        self.town = town
+        self.district = district
+        self.dob = dob
+        self.boatinfo = boatinfo
     
 
     def __repr__(self):
@@ -64,16 +64,16 @@ class User(db.Model):
            'phone': self.phone,
            'vcode': self.vcode
        }
-    # @property
-    # def serialize(self):
-    #    """Return object data in easily serializeable format"""
-    #    return {
-    #         'nickname': self.nickname,
-    #        'town': self.town,
-    #        'district': self.district,
-    #        #'dob': self.dob,
-    #        'boatinfo': self.boatinfo   
-    #    }
+    @property
+    def serializes(self):
+       """Return object data in easily serializeable format"""
+       return {
+            'nickname': self.nickname,
+            'town': self.town,
+            'district': self.district,
+            'dob': self.dob,
+            'boatinfo': self.boatinfo   
+       }
 
 
 class Boat(db.Model):
@@ -136,6 +136,7 @@ class Report(db.Model):
            'lat': self.lat,
            'lng': self.lng,
            'user': self.user
+           #'ts': self.ts
        }
 
 
@@ -164,13 +165,15 @@ class Thanks(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     report = db.Column(db.BigInteger, ForeignKey('report.id'))
     user = db.Column(db.BigInteger, ForeignKey('user.id'))
+    value = db.Column(db.Integer)
 
     # timestamp
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False )
 
-    def __init__(self, report, user):
+    def __init__(self, report, user, value):
         self.report = report
         self.user = user
+        self.value = value
 
 
     def __repr__(self):

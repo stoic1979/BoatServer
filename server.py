@@ -288,14 +288,37 @@ def add_profile():
      
     return json.dumps(ret)
 
+@app.route("/get_user", methods=['POST'])
+def get_user():
+    print ("+++====+get_user+==>>:", request.form)
+    ret = {"err": 0, "msg": "Get the User Details"}
+    user_id = request.form['user_id']
+    user = User.query.filter_by(id=user_id).first()
+    if not user:
+        ret["err"] = 1
+        ret["msg"] = "User not found with given id = %s" % user_id
+    else:
+        ret["User"] = user.serializes
+    return json.dumps(ret)
+
 
 def get_report_like_count(report_id):
     counter = 0
-    likesreport = Likes.query.all()
+    likesreport = Likes.query.filter_by(value=1).all()
+    
     for likes in likesreport:
         if report_id == likes.report:
             counter +=1
     return counter
+
+def get_report_dislike_count(report_id):
+    counter = 0
+    likesreport = Likes.query.filter_by(value=0).all()
+    for likes in likesreport:
+        if report_id == likes.report:
+            counter +=1
+    return counter
+
 
 @app.route("/get_like_count", methods=['POST'])
 def get_like_count():
@@ -306,6 +329,7 @@ def get_like_count():
         report_id = int(request.form['report_id'])
         ret["report_id"] = report_id
         ret["likes_count"] = get_report_like_count(report_id)
+        ret["dislike_count"] = get_report_dislike_count(report_id)
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
@@ -322,13 +346,52 @@ def add_like():
         likeReportId = int(request.form['report_id'])
         likeUserId = int(request.form['user_id'])
         value = int(request.form['value'])
-        like = Likes(likeReportId, likeUserId, value)
-        db.session.add(like)
-        db.session.commit()
+        #like = Likes(likeReportId, likeUserId, value)
+        if Likes.query.filter_by(user=likeUserId).all():
+            print "User is already exist"
+        else:
+            like = Likes(likeReportId, likeUserId, value)
+            db.session.add(like)
+            db.session.commit()
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
     return "Likes Add"
+
+
+def get_user_like_count(user_id):
+    counter = 0
+    likesreport = Likes.query.filter_by(value=1).all()
+    
+    for likes in likesreport:
+        if user_id == likes.user:
+            counter +=1
+    return counter
+
+def get_user_dislike_count(user_id):
+    counter = 0
+    likesreport = Likes.query.filter_by(value=0).all()
+    for likes in likesreport:
+        if user_id == likes.user:
+            counter +=1
+    return counter
+
+@app.route("/users_likes_dislikes", methods=['POST'])
+def user_likes_dislikes():
+    ret = {"error": 0}
+    try:
+        user_id = int(request.form['user_id'])
+        ret["User_id"] = user_id
+        ret["likes_count"] = get_user_like_count(user_id)
+        ret["dislike_count"] = get_user_dislike_count(user_id)
+        thanks_count = Thanks.query.filter_by(value=1).all()
+        for thanks in thanks_count:
+            if user_id == thanks.user:
+                ret["Thanks"] = thanks.value
+    except Exception as exp:
+        print ("exp:", exp)
+        print(traceback.format_exc())
+    return json.dumps(ret)
 
 
 @app.route("/add_thanks", methods=['POST'])
@@ -336,13 +399,37 @@ def add_thanks():
     try:
         report_id = request.form['thanks_report_id']
         user_id = request.form['thanks_user_id']
-        thanks = Thanks(report_id, user_id)
+        flag_value = request.form['flag_value']
+        thanks = Thanks(report_id, user_id, flag_value)
         db.session.add(thanks)
         db.session.commit()
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
     return "Thanks Added"
+
+
+@app.route("/total_thanks", methods=['POST'])
+def total_thanks():
+    ret = {"error": 0}
+    try:
+        report_id = int(request.form['report_id'])
+        counter = 0
+        thanks_total = Thanks.query.all()
+        for thanks in thanks_total:
+            if report_id == thanks.report:
+                counter +=1
+                ret["Total Thanks"] = counter
+                ret["Report Id"] = thanks.report
+                ret["User Id"] = thanks.user
+                ret["Flag"] = thanks.value
+            else:
+                ret["error"] = 1
+                ret["msg"] = "Invaild Report Id Entered by user"
+    except Exception as exp:
+        print ("exp:", exp)
+        print(traceback.format_exc())
+    return json.dumps(ret)
 
 @app.route("/save_reports", methods=['POST'])
 def save_reports():

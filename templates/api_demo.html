@@ -143,9 +143,20 @@
         </form>
 
 
-    
+         <!-- ++++++++++++++++++++++++++++++++++ Get User Like/Dislike ++++++++++++++++++++++++++++++  -->
 
-
+        <h2>Total Likes/Dislikes of a User</h2>
+        <form method="post" action="/users_likes_dislikes">
+            <table>
+                <tr>
+                    <th>User Id</th>
+                    <td><input type="text" name="user_id" placeholder="Enter User Id"></td>
+                </tr>
+               <tr>
+                    <td colspan="2"><input type="submit" value="User Likes/Dislikes">
+                </tr>
+            </table>
+        </form>
 
  <!-- ++++++++++++++++++++++++++++++++++ Add Thanks ++++++++++++++++++++++++++++++  -->
 
@@ -163,12 +174,31 @@
                     </th>
                     <td><input type="text" name="thanks_user_id" placeholder="Enter User ID"></td>
                 </tr>
+                 <tr>
+                    <th>Flag</th>
+                    <td><input type="text" name="flag_value" placeholder="enter Flag"></td>
+                </tr>
                 <tr>
                     <td colspan="2"><input type="submit" value="Add thanks">
                 </tr>
             </table>
         </form>
 
+
+        <!-- ++++++++++++++++++++++++++++++++++ Total Thanks for Report ++++++++++++++++++++++++++++++  -->
+
+        <h2>Total Thanks for Report</h2>
+        <form method="post" action="/total_thanks">
+            <table>
+                <tr>
+                    <th>Report Id</th>
+                    <td><input type="text" name="report_id" placeholder="Enter Report Id"></td>
+                </tr>
+               <tr>
+                    <td colspan="2"><input type="submit" value="total_thanks">
+                </tr>
+            </table>
+        </form>
 
         <!-- ++++++++++++++++++++++++++++++++++ Save Reports ++++++++++++++++++++++++++++++  -->
 
@@ -259,7 +289,7 @@
                 </tr>
                 <tr>
                     <th>Date of Birth</th>
-                    <td><input type="text" name="dob" placeholder="Enter the DOB"></td>
+                    <td><input type="date" name="dob" placeholder="Enter the DOB"></td>
                 </tr>
                 <tr>
                     <th>Boat Info</th>
@@ -267,6 +297,23 @@
                 </tr>
                 <tr>
                     <td colspan="2"><input type="submit" value="Add Profile">
+                </tr>
+            </table>
+        </form>
+
+        <!-- ++++++++++++++++++++++++++++++++++ Get User Details ++++++++++++++++++++++++++++++  -->
+
+        <h2>Get User Details</h2>
+        <form method="post" action="/get_user">
+            <table>
+                <tr>
+                    <th>User Id</th>
+                    <td>
+                        <input type="text" name="user_id" placeholder="Enter Report Id">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="submit" value="Get User Details">
                 </tr>
             </table>
         </form>
