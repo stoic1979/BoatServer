@@ -288,6 +288,33 @@ def add_profile():
      
     return json.dumps(ret)
 
+@app.route("/set_iap", methods=['POST'])
+def set_iap():
+    ret = {"err": 0, "msg": "IAP is saved in Usesr profile"}
+    try:
+        user_id = int(request.form["user_id"])
+        value = int(request.form["value"])
+        user = User.query.filter_by(id=user_id).first()
+        if not user:
+            ret["err"] = 2
+            ret["msg"] = "User not found with given id=%d" % user_id
+        else:
+            user.value = value
+
+            # save and update user 
+            db.session.add(user)
+            db.session.commit()
+            ret["User Id"] = user_id
+            ret["Flag Value"] = user.value
+    except Exception as exp:
+        print ("exp:", exp)
+        print(traceback.format_exc())
+        ret["err"] = 1 
+        ret["msg"] = "Got exception %s" % exp
+    return json.dumps(ret)
+
+
+
 @app.route("/get_user", methods=['POST'])
 def get_user():
     print ("+++====+get_user+==>>:", request.form)
@@ -304,7 +331,7 @@ def get_user():
 
 def get_report_like_count(report_id):
     counter = 0
-    likesreport = Likes.query.filter_by(value=1).all()
+    likesreport = Likes.query.filter_by(value=1).filter_by(report=report_id).all()
     
     for likes in likesreport:
         if report_id == likes.report:
@@ -342,21 +369,29 @@ def get_like_count():
 
 @app.route("/add_like", methods=['POST'])
 def add_like():
+    ret = {"error": 0}
     try:
-        likeReportId = int(request.form['report_id'])
-        likeUserId = int(request.form['user_id'])
+        report_id = int(request.form['report_id'])
+        user_id = int(request.form['user_id'])
         value = int(request.form['value'])
-        #like = Likes(likeReportId, likeUserId, value)
-        if Likes.query.filter_by(user=likeUserId).all():
-            print "User is already exist"
+        
+        # check if like for same report exists by this user
+        like = Likes.query.filter_by(user=user_id).filter_by(report=report_id).first()
+        if like:
+            print "[add_like] User already had liked/disliked this report"
+            like.value = value
         else:
-            like = Likes(likeReportId, likeUserId, value)
-            db.session.add(like)
-            db.session.commit()
+            like = Likes(report_id, user_id, value)
+
+        db.session.add(like)
+        db.session.commit()
+        ret["msg"] = "The Like is added successfully"
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
-    return "Likes Add"
+        ret["error"] = 1
+        ret["msg"] = "Got exception: %s" % exp
+    return json.dumps(ret)
 
 
 def get_user_like_count(user_id):
@@ -396,17 +431,28 @@ def user_likes_dislikes():
 
 @app.route("/add_thanks", methods=['POST'])
 def add_thanks():
+    ret = {"error": 0}
     try:
         report_id = request.form['thanks_report_id']
         user_id = request.form['thanks_user_id']
         flag_value = request.form['flag_value']
-        thanks = Thanks(report_id, user_id, flag_value)
+
+        # check if flag for same report exists by this user
+        thanks = Thanks.query.filter_by(user=user_id).filter_by(report=report_id).first()
+        if thanks:
+            print "[add_thanks] User already had liked/disliked this report"
+            thanks.value = flag_value
+        else:
+            thanks = Thanks(report_id, user_id, flag_value)
         db.session.add(thanks)
         db.session.commit()
+        ret["msg"] = "The Flag is added successfully"
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
-    return "Thanks Added"
+        ret["error"] = 1
+        ret["msg"] = "Got exception: %s" % exp
+    return json.dumps(ret)
 
 
 @app.route("/total_thanks", methods=['POST'])
