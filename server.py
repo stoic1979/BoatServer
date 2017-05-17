@@ -546,7 +546,13 @@ def get_report():
             print ("distance:", distance, " radius:", radius)
             if distance <= radius:
                 #print "adding report", report
-                reports.append(report.serialize)
+                item = {}
+                item["boat_name"] = record["boat_name"]
+                item["boat_type"] = record["boat_type"]
+                item["lat"] = record["lat"]
+                item["lat"] = record["lat"]
+                item["ts"] = str(record["ts"])
+                reports.append(item)
 
         ret["reports"] = reports
     except Exception as exp:
