@@ -435,7 +435,7 @@ def add_thanks():
     try:
         report_id = request.form['thanks_report_id']
         user_id = request.form['thanks_user_id']
-        flag_value = request.form['flag_value']
+        flag_value = int(request.form['flag_value'])
 
         # check if flag for same report exists by this user
         thanks = Thanks.query.filter_by(user=user_id).filter_by(report=report_id).first()
@@ -528,12 +528,22 @@ def get_report():
         lng = float(request.form['lng'])
         radius = float(request.form['radius'])
         reports = []
-        getreport = Report.query.all()
+        #getreport = Report.query.all()
         #print "getreport: ", getreport
         #print
-        for report in getreport:
-            distance = get_geo_distance(lat, lng, report.lat, report.lng)
-            #print "distance:", distance, " radius:", radius
+
+        query = "SELECT DISTINCT boat_name,boat_type,lat,lng,user,ts FROM report where ts > NOW() - INTERVAL 24 HOUR"
+
+        connection = db.session.connection()
+
+        records = connection.execute(query)
+
+        print ("========>>>> records: ", records)
+
+        for record in records.fetchall():
+            distance = get_geo_distance(lat, lng, record["lat"], record["lng"])
+            print ("---- record:", record)
+            print ("distance:", distance, " radius:", radius)
             if distance <= radius:
                 #print "adding report", report
                 reports.append(report.serialize)

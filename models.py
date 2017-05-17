@@ -46,13 +46,13 @@ class User(db.Model):
         self.vcode = vcode
 
     
-    def __init__(self, nickname, town, district, dob, boatinfo, value):
-        self.nickname = nickname
-        self.town = town
-        self.district = district
-        self.dob = dob
-        self.boatinfo = boatinfo
-        self.value = value
+    # def __init__(self, nickname, town, district, dob, boatinfo, value):
+    #     self.nickname = nickname
+    #     self.town = town
+    #     self.district = district
+    #     self.dob = dob
+    #     self.boatinfo = boatinfo
+    #     self.value = value
     
 
     def __repr__(self):
