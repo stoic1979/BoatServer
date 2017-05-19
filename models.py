@@ -115,6 +115,7 @@ class Report(db.Model):
     lng = db.Column(db.Float, unique=True)
     user = db.Column(db.BigInteger, ForeignKey('user.id'))
 
+
     # timestamp
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False )
 
@@ -149,13 +150,15 @@ class Likes(db.Model):
     report = db.Column(db.BigInteger, ForeignKey('report.id'))
     user = db.Column(db.BigInteger, ForeignKey('user.id'))
     value = db.Column(db.Integer)
+    flag = db.Column(db.Integer)
 
     # timestamp
     ts = db.Column(db.TIMESTAMP, default=datetime.utcnow, nullable=False)
-    def __init__(self, report, user, value):
+    def __init__(self, report, user, value, flag):
         self.report = report
         self.user = user
         self.value = value
+        self.flag = flag
         
 
     def __repr__(self):

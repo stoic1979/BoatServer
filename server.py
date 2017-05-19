@@ -350,13 +350,20 @@ def get_report_dislike_count(report_id):
 @app.route("/get_like_count", methods=['POST'])
 def get_like_count():
 
-    ret = {"likes_count": 0, "report_id": 0, "error": 0}  
+    ret = {"error": 0}  
 
     try:
         report_id = int(request.form['report_id'])
+        user_id = int(request.form["user_id"])
         ret["report_id"] = report_id
-        ret["likes_count"] = get_report_like_count(report_id)
-        ret["dislike_count"] = get_report_dislike_count(report_id)
+        ret["likes_count of a report:"] = get_report_like_count(report_id)
+        ret["dislike_count of a report"] = get_report_dislike_count(report_id)
+        ret["User Id"] = user_id
+        # ret["likes_count of a user"] = get_user_like_count(user_id)
+        # ret["dislike_count of a user"] = get_user_dislike_count(user_id)
+
+        likes= Likes.query.filter_by(user=user_id).all()
+        ret["flag"] = likes.flag
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
@@ -374,18 +381,20 @@ def add_like():
         report_id = int(request.form['report_id'])
         user_id = int(request.form['user_id'])
         value = int(request.form['value'])
+        flag_value = int(request.form["flag_value"])
         
         # check if like for same report exists by this user
         like = Likes.query.filter_by(user=user_id).filter_by(report=report_id).first()
         if like:
             print "[add_like] User already had liked/disliked this report"
             like.value = value
+           
         else:
-            like = Likes(report_id, user_id, value)
+            like = Likes(report_id, user_id, value, flag_value)
 
         db.session.add(like)
         db.session.commit()
-        ret["msg"] = "The Like is added successfully"
+        ret["msg"] = "The Like and flag is added successfully"
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
@@ -433,8 +442,8 @@ def user_likes_dislikes():
 def add_thanks():
     ret = {"error": 0}
     try:
-        report_id = request.form['thanks_report_id']
-        user_id = request.form['thanks_user_id']
+        report_id = int(request.form['thanks_report_id'])
+        user_id = int(request.form['thanks_user_id'])
         flag_value = int(request.form['flag_value'])
 
         # check if flag for same report exists by this user
@@ -460,18 +469,28 @@ def total_thanks():
     ret = {"error": 0}
     try:
         report_id = int(request.form['report_id'])
+        user_id = int(request.form['user_id'])
         counter = 0
-        thanks_total = Thanks.query.all()
-        for thanks in thanks_total:
-            if report_id == thanks.report:
-                counter +=1
-                ret["Total Thanks"] = counter
-                ret["Report Id"] = thanks.report
-                ret["User Id"] = thanks.user
-                ret["Flag"] = thanks.value
-            else:
-                ret["error"] = 1
-                ret["msg"] = "Invaild Report Id Entered by user"
+        thanks = Thanks.query.all()
+        thank = Thanks.query.filter_by(report=report_id).first()
+        if not thank:
+            ret["error"] = 1
+            ret["msg"] = "Invaild Report Id Entered by user"
+        else:
+            thanks_total = Thanks.query.all()
+            for thanks in thanks_total:
+                if report_id == thanks.report:
+                    counter +=1
+                    ret["Total Thanks"] = counter
+                    ret["Report Id"] = thanks.report
+                    # ret["flag"] = thanks.value
+                    # ret["User Id"] = user_id
+        thankflag = Thanks.query.filter_by(user=user_id).first()
+        if not thankflag:
+            ret["msg"] = "Invalid User Id"
+        else:
+            ret["flag"] = thankflag.value
+            ret["User Id"] = user_id
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
@@ -489,13 +508,20 @@ def save_reports():
         print ("fatching Report lng :", report.lng)
         print ("fatching Report user :", report.user)
     try:
+        #boat_id = int(request.form['boat_id'])
         boat_name = request.form['boat_name']
         boat_type = request.form['boat_type']
         get_lat = request.form['get_lat']
         get_lng = request.form['get_lng']
         user_id = int(request.form['user_id'])
 
-        # saving report
+        # boatcheck = Boat.query.filter_by(id=boat_id).first()
+        # if not boatcheck:
+        #     ret["err"] = 1
+        #     ret["msg"] = "Boat is not exist"
+        # else:
+        #     # saving report
+        #     report.boat = boat_id
         report = Report(boat_name, boat_type, get_lat, get_lng, user_id)
         db.session.add(report)
         db.session.commit()
@@ -532,7 +558,7 @@ def get_report():
         #print "getreport: ", getreport
         #print
 
-        query = "SELECT DISTINCT boat_name,boat_type,lat,lng,user,ts FROM report where ts > NOW() - INTERVAL 24 HOUR"
+        query = "SELECT DISTINCT boat_name,boat_type,lat,lng,user, id, ts FROM report where ts > NOW() - INTERVAL 24 HOUR"
 
         connection = db.session.connection()
 
@@ -550,7 +576,9 @@ def get_report():
                 item["boat_name"] = record["boat_name"]
                 item["boat_type"] = record["boat_type"]
                 item["lat"] = record["lat"]
-                item["lat"] = record["lat"]
+                item["lng"] = record["lng"]
+                item["id"] = record["id"]
+                item["user"] = record["user"]
                 item["ts"] = str(record["ts"])
                 reports.append(item)
 
