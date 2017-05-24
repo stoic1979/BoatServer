@@ -314,6 +314,26 @@ def set_iap():
     return json.dumps(ret)
 
 
+@app.route("/get_iap", methods=['POST'])
+def get_iap():
+    ret = {"error": 0}
+    try:
+        user_id = int(request.form["user_id"])
+        user = User.query.filter_by(id=user_id).first()
+        if not user:
+            #ret["err"] = 2
+            ret["msg"] = "User not found with given id=%d" % user_id
+            ret["Flag"] = 0
+        else:
+            ret["Flag"] = user.value
+    except Exception as exp:
+        print ("exp:", exp)
+        print(traceback.format_exc())
+        ret["err"] = 1 
+        ret["msg"] = "Got exception %s" % exp
+    return json.dumps(ret)
+
+
 
 @app.route("/get_user", methods=['POST'])
 def get_user():
@@ -356,20 +376,25 @@ def get_like_count():
         report_id = int(request.form['report_id'])
         user_id = int(request.form["user_id"])
         ret["report_id"] = report_id
-        ret["likes_count of a report:"] = get_report_like_count(report_id)
-        ret["dislike_count of a report"] = get_report_dislike_count(report_id)
-        ret["User Id"] = user_id
+        ret["likes_count"] = get_report_like_count(report_id)
+        ret["dislike_count"] = get_report_dislike_count(report_id)
+        like = Likes.query.filter_by(report=report_id).filter_by(user=user_id).first()
+        if not like:
+            ret["Like Value"] = 0
+            ret["flag"] = 0
+            #ret["User Id"] = user_id    
+        else:
+            ret["Like Value"] = like.value
+            ret["flag"] = like.flag
+            ret["User Id"] = user_id
         # ret["likes_count of a user"] = get_user_like_count(user_id)
         # ret["dislike_count of a user"] = get_user_dislike_count(user_id)
-
-        likes= Likes.query.filter_by(user=user_id).all()
-        ret["flag"] = likes.flag
+        #likes= Likes.query.filter_by(user=user_id).first()
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
         ret["error"] = 1
         ret["msg"] = "Got exception: %s" % exp
-
     return json.dumps(ret)
 
 
@@ -485,9 +510,9 @@ def total_thanks():
                     ret["Report Id"] = thanks.report
                     # ret["flag"] = thanks.value
                     # ret["User Id"] = user_id
-        thankflag = Thanks.query.filter_by(user=user_id).first()
+        thankflag = Thanks.query.filter_by(report=report_id).filter_by(user=user_id).first()
         if not thankflag:
-            ret["msg"] = "Invalid User Id"
+            ret["Flag"] = 0
         else:
             ret["flag"] = thankflag.value
             ret["User Id"] = user_id
