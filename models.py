@@ -186,11 +186,6 @@ class Thanks(db.Model):
 
 
 
-try:
-    print ("================================= create_all ===================================")
-    db.create_all()
-except:
-    pass
 
 
 ################################
@@ -199,9 +194,15 @@ except:
 #                              #
 ################################
 if __name__ == "__main__":
+
+    try:
+        print ("================================= create_all ===================================")
+        db.create_all()
+    except:
+        pass
     """
     user = User("77777777", "abc123")
     db.session.add(user)
     db.session.commit()
     """
-    print ("Users:",  User.query.all())
+    #print ("Users:",  User.query.all())
