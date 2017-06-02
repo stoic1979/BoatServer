@@ -126,7 +126,6 @@ class CodeResource(Resource):
         if not User.query.filter_by(phone=phone).filter_by(verification_code=verification_code).first():
             ret["err"] = 1
             ret["msg"] = "Verification with 6 digit code failed, pls check the code"
-
         return ret, 201
 
 # setting up URL end point handlers
@@ -563,7 +562,7 @@ def save_reports():
 #     for report in getreport:
 #         reports.append(report.serialize)
 #         print "fatching Report name :", report.boat_name
-#         print "fatching Report boat type :", report.boat_type
+#         printmain() "fatching Report boat type :", report.boat_type
 #         print "fatching Report lat :", report.lat
 #         print "fatching Report lng :", report.lng
 #         print "fatching Report user id :", report.user
