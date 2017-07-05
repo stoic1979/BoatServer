@@ -372,15 +372,21 @@ def get_report_dislike_count(report_id):
             counter +=1
     return counter
 
-def get_like_dislike_flag(report_id, user_id):
-    like = Likes.query.filter_by(report=report_id).filter_by(user=user_id).first()
-    flag = like.flag
-    return flag
+def get_like_dislike_flag(report_id):
+    counter = 0
+    dislikes = Likes.query.filter_by(report=report_id).filter_by(value=0).all()
+    if dislikes:
+        counter = len(dislikes)
 
-def get_like_dislike_value(report_id, user_id):
-    like = Likes.query.filter_by(report=report_id).filter_by(user=user_id).first()
-    like_value = like.value
-    return like_value
+    return counter
+
+def get_like_dislike_value(report_id):
+    counter = 0
+    # give the list of data 
+    like = Likes.query.filter_by(report=report_id).filter_by(value=1).all()
+    if like:
+        counter = len(like)
+    return counter    
 
 
 @app.route("/get_like_count", methods=['POST'])
@@ -596,7 +602,10 @@ def get_report():
         radius = float(request.form['radius'])
         reports = []
 
-        query = "SELECT DISTINCT boat_name,boat_type,lat,lng,user, id, ts FROM report where ts > NOW() - INTERVAL 24 HOUR"
+        # get for last 24 hours
+        query_24 = "SELECT DISTINCT boat_name,boat_type,lat,lng,user, id, ts FROM report where ts > NOW() - INTERVAL 24 HOUR"
+        
+        query = "SELECT DISTINCT boat_name,boat_type,lat,lng,user, id, ts FROM report"
 
         connection = db.session.connection()
 
@@ -622,8 +631,8 @@ def get_report():
                 item["user_nickname"] = get_user_name(int(record["user"]))
                 item["like_count"] = get_report_like_count(int(record["id"]))
                 item["dislike_count"] = get_report_dislike_count(int(record["id"]))
-                item["like_dislike_flag"] = get_like_dislike_flag(int(record["id"]), int(record["user"]))
-                item["like_dislike_value"] = get_like_dislike_value(int(record["id"]), int(record["user"]))
+                item["like_dislike_flag"] = get_like_dislike_flag(int(record["id"]))
+                item["like_dislike_value"] = get_like_dislike_value(int(record["id"]))
                 item["iap_flag"] = get_iap_count(int(record["user"]))
                 item["thanks_count"] = get_total_thanks(int(record["id"]))
                 item["Total_thanks_flag"] = get_total_thanks_flag(int(record["id"]), int(record["user"]))
