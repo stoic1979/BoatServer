@@ -20,6 +20,7 @@ lng1 = radians(21.012287)
 # setup REST apis
 api = Api(app)
 
+
 class HomeResource(Resource):
     def get(self):
         users = []
@@ -318,19 +319,20 @@ def get_iap():
     ret = {"error": 0}
     try:
         user_id = int(request.form["user_id"])
-        user = User.query.filter_by(id=user_id).first()
-        if not user:
-            #ret["err"] = 2
-            ret["msg"] = "User not found with given id=%d" % user_id
-            ret["Flag"] = 0
-        else:
-            ret["Flag"] = user.value
+        get_iap_count(user_id)
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
         ret["err"] = 1 
         ret["msg"] = "Got exception %s" % exp
-    return json.dumps(ret)
+    return json.dumps(get_iap_count(ret))
+
+def get_iap_count(user_id):
+    
+    user = User.query.filter_by(id=user_id).first()
+    Flag = user.value
+    return Flag
+
 
 
 
@@ -346,6 +348,11 @@ def get_user():
     else:
         ret["User"] = user.serializes
     return json.dumps(ret)
+
+def get_user_name(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    user_name = user.nickname
+    return user_name
 
 
 def get_report_like_count(report_id):
@@ -365,9 +372,19 @@ def get_report_dislike_count(report_id):
             counter +=1
     return counter
 
+def get_like_dislike_flag(report_id, user_id):
+    like = Likes.query.filter_by(report=report_id).filter_by(user=user_id).first()
+    flag = like.flag
+    return flag
+
+def get_like_dislike_value(report_id, user_id):
+    like = Likes.query.filter_by(report=report_id).filter_by(user=user_id).first()
+    like_value = like.value
+    return like_value
+
 
 @app.route("/get_like_count", methods=['POST'])
-def get_like_count():
+def get_like_count(report_id, user_id):
 
     ret = {"error": 0}  
 
@@ -494,31 +511,31 @@ def total_thanks():
     try:
         report_id = int(request.form['report_id'])
         user_id = int(request.form['user_id'])
-        counter = 0
-        thanks = Thanks.query.all()
-        thank = Thanks.query.filter_by(report=report_id).first()
-        if not thank:
-            ret["error"] = 1
-            ret["msg"] = "Invaild Report Id Entered by user"
-        else:
-            thanks_total = Thanks.query.all()
-            for thanks in thanks_total:
-                if report_id == thanks.report:
-                    counter +=1
-                    ret["Total Thanks"] = counter
-                    ret["Report Id"] = thanks.report
+        get_total_thanks(report_id)
+        get_total_thanks_flag(report_id, user_id)
+        
                     # ret["flag"] = thanks.value
                     # ret["User Id"] = user_id
-        thankflag = Thanks.query.filter_by(report=report_id).filter_by(user=user_id).first()
-        if not thankflag:
-            ret["Flag"] = 0
-        else:
-            ret["flag"] = thankflag.value
-            ret["User Id"] = user_id
+        
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
     return json.dumps(ret)
+
+def get_total_thanks(report_id):
+    counter = 0
+    thank = Thanks.query.filter_by(report=report_id).all()
+    if thank:
+        counter = len(thank)
+    
+    return counter
+
+def get_total_thanks_flag(report_id, user_id):
+    counter = 0
+    thankflag = Thanks.query.filter_by(report=report_id).filter_by(user=user_id).filter_by(value=1).all()
+    if thankflag:
+        counter = len(thankflag)
+    return counter
 
 @app.route("/save_reports", methods=['POST'])
 def save_reports():
@@ -526,11 +543,11 @@ def save_reports():
     ret = {"err": 0, "msg": "Report id is save"}
     getreport = Report.query.all()
     for report in getreport:
-        print ("fatching Report name :", report.boat_name)
-        print ("fatching Report boat type :", report.boat_type)
-        print ("fatching Report lat :", report.lat)
-        print ("fatching Report lng :", report.lng)
-        print ("fatching Report user :", report.user)
+        print ("fatching Report name  . . .: ", report.boat_name)
+        print ("fatching Report boat type .: ", report.boat_type)
+        print ("fatching Report lat  . . . : ", report.lat)
+        print ("fatching Report lng . . . .: ", report.lng)
+        print ("fatching Report user . . . : ", report.user)
     try:
         #boat_id = int(request.form['boat_id'])
         boat_name = request.form['boat_name']
@@ -578,9 +595,6 @@ def get_report():
         lng = float(request.form['lng'])
         radius = float(request.form['radius'])
         reports = []
-        #getreport = Report.query.all()
-        #print "getreport: ", getreport
-        #print
 
         query = "SELECT DISTINCT boat_name,boat_type,lat,lng,user, id, ts FROM report where ts > NOW() - INTERVAL 24 HOUR"
 
@@ -595,7 +609,8 @@ def get_report():
             print ("---- record:", record)
             print ("distance:", distance, " radius:", radius)
             if distance <= radius:
-                #print "adding report", report
+                # print "adding report", report
+               
                 item = {}
                 item["boat_name"] = record["boat_name"]
                 item["boat_type"] = record["boat_type"]
@@ -604,7 +619,21 @@ def get_report():
                 item["id"] = record["id"]
                 item["user"] = record["user"]
                 item["ts"] = str(record["ts"])
+                item["user_nickname"] = get_user_name(int(record["user"]))
+                item["like_count"] = get_report_like_count(int(record["id"]))
+                item["dislike_count"] = get_report_dislike_count(int(record["id"]))
+                item["like_dislike_flag"] = get_like_dislike_flag(int(record["id"]), int(record["user"]))
+                item["like_dislike_value"] = get_like_dislike_value(int(record["id"]), int(record["user"]))
+                item["iap_flag"] = get_iap_count(int(record["user"]))
+                item["thanks_count"] = get_total_thanks(int(record["id"]))
+                item["Total_thanks_flag"] = get_total_thanks_flag(int(record["id"]), int(record["user"]))
                 reports.append(item)
+                
+
+
+            # name = get_geo_boatname(lat, lng, record["lat"], record["lng"])
+            # if name <= radius:
+                
 
         ret["reports"] = reports
     except Exception as exp:
@@ -613,6 +642,7 @@ def get_report():
         ret["err"] = 1
         ret["msg"] = "Report Error"
     return json.dumps(ret)
+
 
 def get_geo_distance(lat1, lng1, lat2, lng2):
     R = 6373.0
@@ -624,14 +654,15 @@ def get_geo_distance(lat1, lng1, lat2, lng2):
 
     return R * c * 1000
 
+
 @app.route("/get_distance")
 def get_distance():
-    print ("Going to calculate distance between given longitudes and latitudes")
+    print("Going to calculate distance between given longitudes and latitudes")
 
     report_distance = Report.query.all()
     for report in report_distance:
-        print ("===========" , report.boat_name)
-    R = 6373.0 
+        print ("===========", report.boat_name)
+    R = 6373.0
     # approximate radius of earth in KM
 
     lat1 = radians(30.74659)
@@ -642,10 +673,9 @@ def get_distance():
     distance = get_geo_distance(lat1, lng1, lat2, lng2)
 
     print ("Result", distance)
-    print ("Should be :", 278546,"m")
-    return "distance : %d"  % distance
+    print ("Should be :", 278546, "m")
+    return "distance : %d" % distance
 
- 
 
 @app.route("/get_police_boats")
 def get_police_boats():
@@ -655,7 +685,8 @@ def get_police_boats():
         print ("Boat Number: ", boat.boat_number)
 
     return "get the police Boat"
-#get_police_boat_locations
+# get_police_boat_locations
+
 
 @app.route("/get_police_boat_locations")
 def get_police_boat_locations():
@@ -667,14 +698,12 @@ def get_police_boat_locations():
     return "get police boat locations"
 
 
-
-
 #################################################################
 #                                                               #
 #                           SERVER MAIN                         #
 #                                                               #
 #################################################################
 if __name__ == "__main__":
-    #db.create_all()
+    # db.create_all()
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True, threaded=True)
