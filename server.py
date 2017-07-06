@@ -8,7 +8,7 @@ from flask_restful import Resource, Api, reqparse
 
 from models import User, Boat, Report, Likes, Thanks, db, app
 from utils import *
-from flask import jsonify 
+from flask import jsonify
 import traceback
 from math import sin, cos, atan2, sqrt, radians
 import os
@@ -28,11 +28,9 @@ class HomeResource(Resource):
             for user in User.query.all():
                 users.append(user.serialize)
         except Exception as exp:
-            print( "=============> got exp", exp)
+            print("=============> got exp", exp)
             traceback.print_stack()
-
-
-        ret = { "err": 0, "users": users}
+        ret = {"err": 0, "users": users}
         return ret, 201
 
 
@@ -42,7 +40,6 @@ class PhoneResource(Resource):
     """
 
     def createUser(self, phone):
-        
         print ("Creating phone validation req.: ", phone)
 
         verification_code = get_random_str(6)
@@ -61,10 +58,9 @@ class PhoneResource(Resource):
         phone = args['phone']
 
         ret = {
-                "err": 0, 
+                "err": 0,
                 "msg": "Received phone no., will send 6 digit verification code by SMS"
              }
-        
 
         # ensure that phone no. doesn't exist
         if User.query.filter_by(phone=phone).first():
@@ -74,7 +70,8 @@ class PhoneResource(Resource):
             self.createUser(phone)
 
         return ret, 201
-        #return json.dumps(ret)
+        # return json.dumps(ret)
+
 
 class PoliceBoatResource(Resource):
     """
@@ -94,7 +91,7 @@ class PoliceBoatResource(Resource):
         lng = args['lng']
 
         ret = {
-                "err": 0, 
+                "err": 0,
                 "msg": "police boat added"
              }
 
@@ -119,7 +116,7 @@ class CodeResource(Resource):
         verification_code = args['verification_code']
 
         ret = {
-                "err": 0, 
+                "err": 0,
                 "msg": "Verification done"
                 }
 
@@ -130,13 +127,12 @@ class CodeResource(Resource):
         return ret, 201
 
 # setting up URL end point handlers
-#api.add_resource(PhoneResourc)
-#api.add_resource(CodeResource, '/verify_code')
+# api.add_resource(PhoneResourc)
+# api.add_resource(CodeResource, '/verify_code')
 api.add_resource(HomeResource, '/')
 
 
 def createUser(phone):
-        
     print ("Creating phone validation req.: ", phone)
 
     vcode = get_random_str(6)
@@ -144,21 +140,19 @@ def createUser(phone):
     db.session.add(user)
     db.session.commit()
 
-    #dlog("user id: %d" % user.id)
+    # dlog("user id: %d" % user.id)
     print ("user id:===> : %d" % user.id)
 
     return user.id
 
-@app.route("/verify_phoneno" , methods=['POST'])
+
+@app.route("/verify_phoneno", methods=['POST'])
 def verify_phoneno():
 
     ret = {"err": 0, "msg": "Received phone no., will send 6 digit verification code by SMS"}
 
     """
     user = User.query.filter_by(phone=phone).first()
-    
-
-    
     for user in User.query.all():
         user = User.query.filter_by(phone=phone).first()
     print "user id:===> : %d" % user.id
@@ -166,9 +160,6 @@ def verify_phoneno():
     #
     """
     phone = request.form['phoneno']
-
-
-
     dlog("Verigfuying phone no.: %s" % phone)
 
     # ensure that phone no. doesn't exist
@@ -177,14 +168,12 @@ def verify_phoneno():
         ret["msg"] = "Phone no. already exist"
     else:
         ret["uid"] = createUser(phone)
-
     return json.dumps(ret)
 
 
-
-@app.route("/verify_code" , methods=['POST'])
+@app.route("/verify_code", methods=['POST'])
 def verify_code():
-    ret = {"err": 0, "msg": "Verification done" }
+    ret = {"err": 0, "msg": "Verification done"}
 
     phone = request.form['phoneno']
     vcode = request.form['vcode']
@@ -209,14 +198,18 @@ def verify_code():
 
 
 # add police boat
-@app.route("/add_police_boat" , methods=['POST'])
+
+
+@app.route("/add_police_boat", methods=['POST'])
 def add_police_boat():
     return "add police boat"
 
+
 @app.route("/api_demo")
 def apidemo():
-    templateData = {'title' : 'Home Page'}
-    return render_template("api_demo.html", **templateData )
+    templateData = {'title': 'Home Page'}
+    return render_template("api_demo.html", **templateData)
+
 
 @app.route("/save_police_boat", methods=['POST'])
 def api_post():
@@ -224,7 +217,7 @@ def api_post():
     try:
         boat_name = request.form['boat_name']
         btype = request.form['btype']
-        #boat = Boat("assd", 1234)
+        # boat = Boat("assd", 1234)
         boat = Boat(boat_name, btype)
         db.session.add(boat)
         db.session.commit()
@@ -233,10 +226,11 @@ def api_post():
         print(traceback.print_stack())
     return "boat_name: %s is saved" % (boat_name)
 
+
 @app.route("/location")
 def location():
-    templateData = {'title' : 'Home Page'}
-    return render_template("location.html", **templateData )
+    templateData = {'title': 'Home Page'}
+    return render_template("location.html", **templateData)
 
 """@app.route("/save_location", methods=['POST'])
 def save_location():
@@ -251,12 +245,11 @@ def save_location():
 """
 
 
-
 @app.route("/add_profile", methods=['POST'])
 def add_profile():
-    print ("======add_profile()::",request.form)
+    print ("======add_profile()::", request.form)
     ret = {"err": 0, "msg": "Usesr profile is saved"}
-    
+
     try:
         uid = int(request.form['uid'])
         nickname = request.form['nickname']
@@ -276,17 +269,17 @@ def add_profile():
             user.dob = dob
             user.boatinfo = boatinfo
 
-            # save and update user 
+            # save and update user
             db.session.add(user)
             db.session.commit()
             ret["profile"] = user.serialize
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
-        ret["err"] = 1 
+        ret["err"] = 1
         ret["msg"] = "Got exception %s" % exp
-     
     return json.dumps(ret)
+
 
 @app.route("/set_iap", methods=['POST'])
 def set_iap():
@@ -301,7 +294,7 @@ def set_iap():
         else:
             user.value = value
 
-            # save and update user 
+            # save and update user
             db.session.add(user)
             db.session.commit()
             ret["User Id"] = user_id
@@ -309,7 +302,7 @@ def set_iap():
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
-        ret["err"] = 1 
+        ret["err"] = 1
         ret["msg"] = "Got exception %s" % exp
     return json.dumps(ret)
 
@@ -323,17 +316,15 @@ def get_iap():
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
-        ret["err"] = 1 
+        ret["err"] = 1
         ret["msg"] = "Got exception %s" % exp
     return json.dumps(get_iap_count(ret))
 
+
 def get_iap_count(user_id):
-    
     user = User.query.filter_by(id=user_id).first()
     Flag = user.value
     return Flag
-
-
 
 
 @app.route("/get_user", methods=['POST'])
@@ -349,6 +340,7 @@ def get_user():
         ret["User"] = user.serializes
     return json.dumps(ret)
 
+
 def get_user_name(user_id):
     user = User.query.filter_by(id=user_id).first()
     user_name = user.nickname
@@ -358,41 +350,44 @@ def get_user_name(user_id):
 def get_report_like_count(report_id):
     counter = 0
     likesreport = Likes.query.filter_by(value=1).filter_by(report=report_id).all()
-    
+
     for likes in likesreport:
         if report_id == likes.report:
-            counter +=1
+            counter += 1
     return counter
+
 
 def get_report_dislike_count(report_id):
     counter = 0
     likesreport = Likes.query.filter_by(value=0).all()
     for likes in likesreport:
         if report_id == likes.report:
-            counter +=1
+            counter += 1
     return counter
 
-def get_like_dislike_flag(report_id):
+
+def get_like_dislike_flag(report_id, user_id):
     counter = 0
-    dislikes = Likes.query.filter_by(report=report_id).filter_by(value=0).all()
-    if dislikes:
-        counter = len(dislikes)
+    likes = Likes.query.filter_by(report=report_id).filter_by(user=user_id).filter_by(value=1).all()
+    if likes:
+        counter = len(likes)
 
     return counter
 
-def get_like_dislike_value(report_id):
+
+def get_like_dislike_value(report_id, user_id):
     counter = 0
-    # give the list of data 
-    like = Likes.query.filter_by(report=report_id).filter_by(value=1).all()
+    # give the list of data
+    like = Likes.query.filter_by(report=report_id).filter_by(report=report_id).filter_by(value=1).all()
     if like:
         counter = len(like)
-    return counter    
+    return counter
 
 
 @app.route("/get_like_count", methods=['POST'])
 def get_like_count(report_id, user_id):
 
-    ret = {"error": 0}  
+    ret = {"error": 0}
 
     try:
         report_id = int(request.form['report_id'])
@@ -404,21 +399,20 @@ def get_like_count(report_id, user_id):
         if not like:
             ret["Like Value"] = 0
             ret["flag"] = 0
-            #ret["User Id"] = user_id    
+            # ret["User Id"] = user_id
         else:
             ret["Like Value"] = like.value
             ret["flag"] = like.flag
             ret["User Id"] = user_id
         # ret["likes_count of a user"] = get_user_like_count(user_id)
         # ret["dislike_count of a user"] = get_user_dislike_count(user_id)
-        #likes= Likes.query.filter_by(user=user_id).first()
+        # likes= Likes.query.filter_by(user=user_id).first()
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
         ret["error"] = 1
         ret["msg"] = "Got exception: %s" % exp
     return json.dumps(ret)
-
 
 
 @app.route("/add_like", methods=['POST'])
@@ -429,13 +423,12 @@ def add_like():
         user_id = int(request.form['user_id'])
         value = int(request.form['value'])
         flag_value = int(request.form["flag_value"])
-        
+
         # check if like for same report exists by this user
         like = Likes.query.filter_by(user=user_id).filter_by(report=report_id).first()
         if like:
             print "[add_like] User already had liked/disliked this report"
             like.value = value
-           
         else:
             like = Likes(report_id, user_id, value, flag_value)
 
@@ -453,19 +446,21 @@ def add_like():
 def get_user_like_count(user_id):
     counter = 0
     likesreport = Likes.query.filter_by(value=1).all()
-    
+
     for likes in likesreport:
         if user_id == likes.user:
-            counter +=1
+            counter += 1
     return counter
+
 
 def get_user_dislike_count(user_id):
     counter = 0
     likesreport = Likes.query.filter_by(value=0).all()
     for likes in likesreport:
         if user_id == likes.user:
-            counter +=1
+            counter += 1
     return counter
+
 
 @app.route("/users_likes_dislikes", methods=['POST'])
 def user_likes_dislikes():
@@ -519,22 +514,20 @@ def total_thanks():
         user_id = int(request.form['user_id'])
         get_total_thanks(report_id)
         get_total_thanks_flag(report_id, user_id)
-        
-                    # ret["flag"] = thanks.value
-                    # ret["User Id"] = user_id
-        
+        # ret["flag"] = thanks.value    except Exception as exp:
     except Exception as exp:
         print ("exp:", exp)
         print(traceback.format_exc())
     return json.dumps(ret)
+
 
 def get_total_thanks(report_id):
     counter = 0
     thank = Thanks.query.filter_by(report=report_id).all()
     if thank:
         counter = len(thank)
-    
     return counter
+
 
 def get_total_thanks_flag(report_id, user_id):
     counter = 0
@@ -542,6 +535,7 @@ def get_total_thanks_flag(report_id, user_id):
     if thankflag:
         counter = len(thankflag)
     return counter
+
 
 @app.route("/save_reports", methods=['POST'])
 def save_reports():
@@ -555,7 +549,7 @@ def save_reports():
         print ("fatching Report lng . . . .: ", report.lng)
         print ("fatching Report user . . . : ", report.user)
     try:
-        #boat_id = int(request.form['boat_id'])
+        # boat_id = int(request.form['boat_id'])
         boat_name = request.form['boat_name']
         boat_type = request.form['boat_type']
         get_lat = request.form['get_lat']
@@ -592,11 +586,13 @@ def save_reports():
 #         ret = { "err": 0, "reports": reports}
 #     return json.dumps(ret)
 
+
 @app.route("/get_report", methods=['POST'])
 def get_report():
     print ("======== get_report() : ======= ", request.form)
-    ret = { "err": 0, "reports": []}
+    ret = {"err": 0, "reports": []}
     try:
+        user_id = request.form['user_id']
         lat = float(request.form['lat'])
         lng = float(request.form['lng'])
         radius = float(request.form['radius'])
@@ -604,8 +600,8 @@ def get_report():
 
         # get for last 24 hours
         query_24 = "SELECT DISTINCT boat_name,boat_type,lat,lng,user, id, ts FROM report where ts > NOW() - INTERVAL 24 HOUR"
-        
-        query = "SELECT DISTINCT boat_name,boat_type,lat,lng,user, id, ts FROM report"
+
+        query = "SELECT DISTINCT boat_name, boat_type, lat, lng, user, id, ts FROM report"
 
         connection = db.session.connection()
 
@@ -619,7 +615,6 @@ def get_report():
             print ("distance:", distance, " radius:", radius)
             if distance <= radius:
                 # print "adding report", report
-               
                 item = {}
                 item["boat_name"] = record["boat_name"]
                 item["boat_type"] = record["boat_type"]
@@ -630,20 +625,20 @@ def get_report():
                 item["ts"] = str(record["ts"])
                 item["user_nickname"] = get_user_name(int(record["user"]))
                 item["like_count"] = get_report_like_count(int(record["id"]))
-                item["dislike_count"] = get_report_dislike_count(int(record["id"]))
-                item["like_dislike_flag"] = get_like_dislike_flag(int(record["id"]))
-                item["like_dislike_value"] = get_like_dislike_value(int(record["id"]))
+                item["dislike_count"] = get_report_dislike_count(
+                    int(record["id"]))
+                item["like_dislike_flag"] = get_like_dislike_flag(
+                    int(record["id"]), int(user_id))
+                item["like_dislike_value"] = get_like_dislike_value(
+                    int(record["id"]), int(user_id))
                 item["iap_flag"] = get_iap_count(int(record["user"]))
                 item["thanks_count"] = get_total_thanks(int(record["id"]))
-                item["Total_thanks_flag"] = get_total_thanks_flag(int(record["id"]), int(record["user"]))
+                item["Total_thanks_flag"] = get_total_thanks_flag(
+                    int(record["id"]), int(user_id))
                 reports.append(item)
-                
-
-
-            # name = get_geo_boatname(lat, lng, record["lat"], record["lng"])
-            # if name <= radius:
-                
-
+                # name = get_geo_boatname(lat, lng,
+                # record["lat"], record["lng"])
+                # if name <= radius:
         ret["reports"] = reports
     except Exception as exp:
         print ("[get_report] :: exp:", exp)
@@ -652,7 +647,26 @@ def get_report():
         ret["msg"] = "Report Error"
     return json.dumps(ret)
 
+@app.route("/get_report_data")
+def get_report_data():
+    ret = {"error = 0"}
+    likes = []
+    # query = SELECT * from Report ORDER BY Date DESC
+    query = "SELECT * FROM likes order by ts DESC"
+    connection = db.session.connection()
+    records = connection.execute(query)
+    item = {}
+    for r in records.fetchall():
+        print "<<==================record========>>", r
+        item["report"] = r["report"]
+        item["user"] = r["user"]
+        item["value"] = r["value"]
+        item["flag"] = r["flag"]
+        likes.append(item)
+    ret["like"] = likes
+    return json.dumps(ret)
 
+    
 def get_geo_distance(lat1, lng1, lat2, lng2):
     R = 6373.0
     dlng = lng2 - lng1
