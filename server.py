@@ -216,7 +216,7 @@ def api_post():
     print ("===================save_police_boat :", request.form)
     try:
         boat_name = request.form['boat_name']
-        btype = request.form['btype']
+        btype = int(request.form['btype'])
         # boat = Boat("assd", 1234)
         boat = Boat(boat_name, btype)
         db.session.add(boat)
@@ -601,7 +601,7 @@ def get_report():
         # get for last 24 hours
         query_24 = "SELECT DISTINCT boat_name,boat_type,lat,lng,user, id, ts FROM report where ts > NOW() - INTERVAL 24 HOUR"
 
-        query = "SELECT DISTINCT boat_name, boat_type, lat, lng, user, id, ts FROM report"
+        query = "SELECT DISTINCT boat_name, boat_type, lat, lng, user, id, ts FROM report  order by ts DESC "
 
         connection = db.session.connection()
 
@@ -635,10 +635,18 @@ def get_report():
                 item["thanks_count"] = get_total_thanks(int(record["id"]))
                 item["Total_thanks_flag"] = get_total_thanks_flag(
                     int(record["id"]), int(user_id))
+
+                """
+                A report (boat)  with more than 20 reports which has more bad than good ratings should be removed from the list. 
+                If a better but older report is in the system, this should be displayed again instead.
+                """
+                total_cnt = item["dislike_count"] + item["like_count"]
+
+                if total_cnt > 10 and item["dislike_count"] > item["like_count"]:
+                    continue
+
                 reports.append(item)
-                # name = get_geo_boatname(lat, lng,
-                # record["lat"], record["lng"])
-                # if name <= radius:
+            
         ret["reports"] = reports
     except Exception as exp:
         print ("[get_report] :: exp:", exp)
@@ -647,24 +655,6 @@ def get_report():
         ret["msg"] = "Report Error"
     return json.dumps(ret)
 
-@app.route("/get_report_data")
-def get_report_data():
-    ret = {"error = 0"}
-    likes = []
-    # query = SELECT * from Report ORDER BY Date DESC
-    query = "SELECT * FROM likes order by ts DESC"
-    connection = db.session.connection()
-    records = connection.execute(query)
-    item = {}
-    for r in records.fetchall():
-        print "<<==================record========>>", r
-        item["report"] = r["report"]
-        item["user"] = r["user"]
-        item["value"] = r["value"]
-        item["flag"] = r["flag"]
-        likes.append(item)
-    ret["like"] = likes
-    return json.dumps(ret)
 
     
 def get_geo_distance(lat1, lng1, lat2, lng2):
