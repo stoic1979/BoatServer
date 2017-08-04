@@ -642,7 +642,7 @@ def get_report():
                 """
                 total_cnt = item["dislike_count"] + item["like_count"]
 
-                if total_cnt > 10 and item["dislike_count"] > item["like_count"]:
+                if total_cnt >=20 and item["dislike_count"] > item["like_count"]:
                     continue
 
                 reports.append(item)
