@@ -196,10 +196,10 @@ class Thanks(db.Model):
 if __name__ == "__main__":
 
     try:
-        print ("================================= create_all ===================================")
         db.create_all()
-    except:
-        pass
+        print ("================================= create_all ===================================")
+    except Exception as exp:
+        print '[Models] Got Exception: %s' % exp
     """
     user = User("77777777", "abc123")
     db.session.add(user)
